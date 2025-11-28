@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <!-- Link to static CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#students">Students</a></li>
+                <li><a href="#add">Add Student</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home" class="section">
+        <h2>Welcome to Student Management System</h2>
+    </section>
+
+    <!-- Students List Section -->
+    {% comment %} <section id="students" class="section">
+        <h2>Students List</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>101</td>
+                    <td>Gopika T</td>
+                    <td>Computer Science</td>
+                    <td>3rd Year</td>
+                </tr>
+
+                <tr>
+                    <td>102</td>
+                    <td>Niveditha KS</td>
+                    <td>Artificial Intelligence</td>
+                    <td>4th Year</td>
+                </tr>
+
+                <tr>
+                    <td>103</td>
+                    <td>Aparna Chandhran T</td>
+                    <td>Electronics</td>
+                    <td>2nd Year</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </section> {% endcomment %}
+    
+        <!-- ==== SLIDE-IN USER SIDEBAR ==== -->
+
+    <div class="side-panel" id="sidePanel">
+        <button class="close-btn" id="closeBtn"> &times;</button>
+
+        <h2 class="login-sign">Sign In</h2>
+
+        <!-- Add your login form fields here -->
+        <form>
+            <input class="input-login" type="text" placeholder="Email" required autocomplete="current-password">
+            <br>
+            <input class="input-login" type="password" placeholder="Password" required autocomplete="current-password">
+        </form>
+
+        <a href="" class="forgot-password">Forgot password</a>
+        <p class="para">By signing into an existing account, you agree to our
+            <a href="properks.html" target="_blank">ProPerks Terms & Conditions</a>,
+            <a href="general.html" target="_blank">General Terms & Conditions</a>,
+            <a href="privacy.html" target="_blank">Privacy Policy</a>
+        </p>
+
+        <button class="sign-account" onclick="loadContent('')">Sign Into Your Account</button>
+        <div class="login-google">
+            <img src="image/google-img.svg">
+            <span><a>Sign in with Google</a></span>
+        </div>
+        <p class="need-para">Need an account? <a>Sign up now</a></p>P
+    </div>
+
+    <!-- Add Student Section -->
+    <section id="add" class="section">
+        <h2>Add New Student</h2>
+
+        <form>
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter student name">
+
+            <label>Roll Number</label>
+            <input type="text" placeholder="Enter roll number">
+
+            <label>Course</label>
+            <input type="text" placeholder="Enter course">
+
+            <label>Year</label>
+            <select>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+            </select>
+
+            <button type="submit">Add Student</button>
+        </form>
+    </section>
+
+    <footer>
+    </footer>
+    <script>
+    
+
+</body>
+</html>

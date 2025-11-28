@@ -1,0 +1,154 @@
+ <style>
+  :root {
+    --sidebar-width: 250px;
+  }
+
+  /* LEFT SIDEBAR */
+  .side-panel {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * var(--sidebar-width)); /* hidden to the left */
+    width: var(--sidebar-width);
+    height: 100%;
+    background: #1b1933;
+    color: #d1d5db;
+    padding: 28px 20px;
+    transition: left 0.35s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  .side-panel.open {
+    left: 0; /* slide in */
+  }
+
+  /* MAIN CONTENT */
+  #mainContent {
+    transition: transform 0.35s ease;
+  }
+
+  /* shift to the RIGHT */
+  #mainContent.shifted {
+    transform: translateX(var(--sidebar-width));
+  }
+
+  /* NAVBAR */
+  .navbar {
+    background: #4e73df;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  #side_btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .dashboard-container {
+    padding: 30px;
+  }
+
+  .side-panel a {
+    display: block;
+    text-decoration: none;
+    padding: 10px 0;
+    color: #d1d5db;
+  }
+
+  .side-panel hr {
+    border-color: #374151;
+  }
+</style>
+
+<!-- MAIN CONTENT WRAPPER -->
+<div id="mainContent">
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+      <button id="side_btn"><i id="menuIcon" class="fa-solid fa-bars"></i></button>
+      <div style="font-weight:700; margin-left:10px;">Admin Dashboard</div>
+      <a href="#" style="margin-left:auto; background:white; padding:8px 12px; border-radius:8px; color:#4e73df;">Logout</a>
+  </div>
+
+  <!-- DASHBOARD CONTENT -->
+  <div class="dashboard-container">
+      <h2>Dashboard Content Goes Here</h2>
+      <p>This section will shift right when sidebar opens.</p>
+  </div>
+</div>
+
+<!-- LEFT SIDEPANEL -->
+<div class="side-panel" id="sidePanel">
+
+  <button class="close-btn" id="closeBtn" style="
+      background:transparent;
+      border:none;
+      color:#fff;
+      font-size:24px;
+      position:absolute;
+      right:10px;
+      top:10px;">×</button>
+
+  <h2 style="color:white; text-align:center;">Admin</h2>
+  <hr>
+
+  <a href="#">Dashboard</a>
+  <a href="#">Admin</a>
+  <a href="#">Teacher</a>
+  <a href="#">Student</a>
+  <a href="#">Parent</a>
+
+  <div class="menu-item" onclick="toggleMenu('academicsMenu',this)">
+      <span>Academics</span>
+      <span class="arrow">&lt;</span>
+  </div>
+
+  <div id="academicsMenu" class="subMenu" style="display:none; padding-left:15px;">
+      <a href="#">Class</a>
+      <a href="#">Subject</a>
+      <a href="#">Assign Subject</a>
+      <a href="#">Syllabus</a>
+      <a href="#">Timetable</a>
+  </div>
+
+  <a href="#">Fees</a>
+  <a href="#">Exams</a>
+  <a href="#">Attendance</a>
+  <a href="#">Communicate</a>
+  <a href="#">Settings</a>
+  <a href="#">Logout</a>
+</div>
+
+<!-- SIDEBAR TOGGLE SCRIPT -->
+<script>
+const sideBtn = document.getElementById('side_btn');
+const sidePanel = document.getElementById('sidePanel');
+const mainContent = document.getElementById('mainContent');
+const menuIcon = document.getElementById('menuIcon');
+const closeBtn = document.getElementById('closeBtn');
+
+function openSidebar() {
+    sidePanel.classList.add("open");
+    mainContent.classList.add("shifted");
+    menuIcon.classList.remove("fa-bars");
+    menuIcon.classList.add("fa-xmark");
+}
+
+function closeSidebar() {
+    sidePanel.classList.remove("open");
+    mainContent.classList.remove("shifted");
+    menuIcon.classList.remove("fa-xmark");
+    menuIcon.classList.add("fa-bars");
+}
+
+sideBtn.addEventListener("click", () => {
+    if (sidePanel.classList.contains("open")) closeSidebar();
+    else openSidebar();
+});
+
+closeBtn.addEventListener("click", closeSidebar);
+</script>

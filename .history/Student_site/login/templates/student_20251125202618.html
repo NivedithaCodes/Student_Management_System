@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+    }
+
+    /* Top Navbar */
+    .navbar {
+        background: #4e73df;
+        color: white;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    /* Sections Grid */
+    .dashboard-container {
+        padding: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+    }
+
+    /* Each Box */
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+    }
+
+    .card i {
+        font-size: 40px;
+        color: #4e73df;
+        margin-bottom: 10px;
+    }
+
+    .card h3 {
+        margin: 10px 0;
+        color: #333;
+    }
+
+    .card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .card a {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #4e73df;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    /* Logout Button */
+    .logout {
+        float: right;
+        margin-top: 0px;
+        margin-right: 20px;
+        backgrou: #4e73df;;
+        padding: 8px 14px;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    /* Side panel */
+  .side-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;                    /*  full page height */
+    overflow-y: auto;                 /* to scroll vertically */
+    overflow-x: hidden;
+    width: 330px;
+    max-width: 90vw;
+    /* background: #fff; */
+    background: #1b1933;
+    box-shadow: -2px 0 16px rgba(0, 0, 0, 0.14);
+    transition: right 0.33s cubic-bezier(.25, .8, .25, 1);
+    z-index: 999999;
+    padding: 28px 24px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    color:#d1d5db;
+}
+
+/* Show the panel */
+.side-panel.open {
+    left: 0;
+}
+
+/* Close button */
+.close-btn {
+    /* background:black; */
+    background: #1b1933;
+    border: none;
+    font-size: 1.6em;
+    /* color:white; */
+    color:#F8FAFC;
+    position: absolute;
+    top: 10px;
+    right: 23px;
+    cursor: pointer;
+    width:20px;
+    /* border-radius:100px; */
+}
+
+.side-panel h2{
+    text-align: center;
+    margin-bottom:20px;
+   
+}
+.side-panel a{
+    display: block;
+    padding:12px 20px;
+    color:#d1d5db;
+    text-decoration: none;
+}
+
+.side-panel a:hover{
+    background:#374151;
+}
+
+.menu-item{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:12px 20px;
+    color:#d1d5db;
+    cursor:pointer;
+}
+
+.menu-item:hover{
+    background: #374151;
+}
+
+.arrow{
+    transition: 0.3s;
+}
+
+.subMenu{
+    display:none;
+    flex-direction: column;
+    /* background:#374151; */
+}
+
+.subMenu a{
+    padding: 10px 40px;
+    display: block;
+    color:#d1d5db;
+    font-size: 1em;
+}
+
+.subMenu:hover{
+    background:#4b5563;
+}
+
+.menu-item.active .arrow{
+    transform: rotate(-90deg);
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <button id ="side_btn">
+    <i class="fa-solid fa-bars" style="font-size:26px; cursor:pointer;"></i>
+  </button>
+  Student Dashboard
+  <a href="{% url 'logout' %}" class="logout">Logout</a>
+</div>
+
+<!-- ==== SLIDE-IN USER SIDEBAR ==== -->
+
+  {% comment %} <button id="side_btn">
+    <i class="fa-solid fa-bars" onclick="openSidePanel()" style="font-size:26px; cursor:pointer;"></i>
+    </button> {% endcomment %}
+
+  <div class="side-panel" id="sidePanel">
+      <button class="close-btn" id="closeBtn"> &times;</button>
+
+        <h2>Admin</h2>
+        <hr>
+        <a href="#">Dashboard</a>
+        <a href="#">Admin</a>
+        <a href="#">Teacher</a>
+        <a href="#">Student</a>
+        <a href="#">Parent</a>
+
+        <div class="menu-item" onclick="toggleMenu('academicsMenu',this)">
+           <span>Academics</span>
+           <span class="arrow">&lt;</span>
+        </div>
+        
+        <div id="academicsMenu" class="subMenu">
+           <a href="#">Class</a>
+           <a href="#">Subject</a>
+           <a href="#">Assign Subject</a>
+           <a href="#">Syllabus</a>
+           <a href="#">Class Timetable</a>
+           <a href="#">Assign Class Teacher</a>
+
+        </div>
+
+        <a href="#">Fees Collection</a>
+        <a href="#">Examinations</a>
+        <a href="#">Attendance</a>
+        <a href="#">Communicate</a>
+        <a href="#">My Account</a>
+        <a href="#">Setting</a>
+        <a href="#">Change Password</a>
+        <a href="#">Logout</a>      
+  </div>
+
+<div class="dashboard-container">
+
+    <div class="card">
+        <i class="fa-solid fa-user-graduate"></i>
+        <h3>My Profile</h3>
+        <p>View or edit your student profile details.</p>
+        <a href="#">Open</a>
+    </div>
+
+    <div class="card">
+        <i class="fa-solid fa-book"></i>
+        <h3>My Courses</h3>
+        <p>Check courses you are enrolled in.</p>
+        <a href="#">Open</a>
+    </div>
+
+    <div class="card">
+        <i class="fa-solid fa-clipboard-check"></i>
+        <h3>Attendance</h3>
+        <p>View your attendance record.</p>
+        <a href="#">Open</a>
+    </div>
+
+    <div class="card">
+        <i class="fa-solid fa-chart-line"></i>
+        <h3>Marks / Grades</h3>
+        <p>View exam marks and performance graph.</p>
+        <a href="#">Open</a>
+    </div>
+
+    <div class="card">
+        <i class="fa-solid fa-bell"></i>
+        <h3>Notifications</h3>
+        <p>See new announcements.</p>
+        <a href="#">Open</a>
+    </div>
+
+    <div class="card">
+        <i class="fa-solid fa-comments"></i>
+        <h3>Contact Faculty</h3>
+        <p>Send messages to teachers.</p>
+        <a href="#">Open</a>
+    </div>
+
+</div>
+
+<script>
+
+
+/* Show panel */
+        document.getElementById('side_btn').onclick = function (e) {
+            e.preventDefault();
+            document.getElementById('sidePanel').classList.add('open');
+        }
+
+        // Close panel
+        document.getElementById('closeBtn').onclick = function () {
+            document.getElementById('sidePanel').classList.remove('open');
+        }
+
+        //submenu 
+        function toggleMenu(id,element){
+            const subMenu=document.getElementById(id);
+
+            if(subMenu.style.display === 'block'){
+                subMenu.style.display = 'none';
+                element.classList.remove('active');
+            }
+            else{
+                subMenu.style.display = "block"
+                element.classList.add('active');
+            }
+</script> 
+{% if messages %}
+  <script>
+    {% for message in messages %}
+      alert("{{ message }}");
+    {% endfor %}
+  </script>
+{% endif %}
+
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<script>
+
+  /* =======================
+       Close Popup
+     ======================= */
+  function closePopup(id) {
+    document.getElementById(id).style.display = "none";
+
+    // Remove SIGNUP backend error
+    const signupError = document.getElementById("signup_error");
+    if (signupError) {
+        signupError.innerHTML = "";
+        signupError.style.display = "none";
+    }
+
+    // Remove LOGIN backend error
+    const loginError = document.getElementById("login_error");
+    if (loginError) {
+        loginError.innerHTML = "";
+        loginError.style.display = "none";
+    }
+
+    // Reset the form fields inside popup
+    const form = document.querySelector("#" + id + " form");
+    if (form) form.reset();
+  }
+
+  /* =======================
+       Open Popup
+     ======================= */
+  function openPopup(id) {
+    document.getElementById(id).style.display = "flex";
+  }
+
+  /* =======================
+       Switch Popup
+     ======================= */
+  function switchPopup(closeId, openId) {
+    closePopup(closeId);
+    openPopup(openId);
+  }
+
+  /* =======================
+       Password Match Check
+     ======================= */
+  function checkPassword() {
+    let password = document.getElementById("signup_password").value;
+    let confirm_password = document.getElementById("confirm_password").value;
+    let msg = document.getElementById("errorMsg");
+    let btn = document.getElementById("signupBtn");
+
+    btn.disabled = true;
+
+    if (confirm_password === "") {
+      msg.style.display = "none";
+      return;
+    }
+
+    if (password === confirm_password) {
+      msg.style.display = "none";
+      btn.disabled = false;
+    } else {
+      msg.style.display = "block";
+      btn.disabled = true;
+    }
+  }
+
+  /* =======================
+       Django popup trigger
+     ======================= */
+  {% if popup == 'login' %}
+    window.onload = function () {
+        openPopup('loginPopup');
+    }
+  {% elif popup == 'signup' %}
+    window.onload = function () {
+        openPopup('signupPopup');
+    }
+  {% endif %}
+
+  /* =======================
+       Side Panel Controls
+     ======================= */
+  document.getElementById('side_btn').onclick = function (e) {
+    e.preventDefault();
+    document.getElementById('sidePanel').classList.add('open');
+  }
+
+  document.getElementById('closeBtn').onclick = function () {
+    document.getElementById('sidePanel').classList.remove('open');
+  }
+
+  function toggleMenu(id, element) {
+    const subMenu = document.getElementById(id);
+    
+    if (subMenu.style.display === 'block') {
+      subMenu.style.display = 'none';
+      element.classList.remove('active');
+    } else {
+      subMenu.style.display = 'block';
+      element.classList.add('active');
+    }
+  }
+
+</script>

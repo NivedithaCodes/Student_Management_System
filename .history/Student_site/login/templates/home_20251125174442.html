@@ -1,0 +1,323 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <!-- Link to static CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#students">Students</a></li>
+                <li><a href="#add">Add Student</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home" class="section">
+        <h2>Welcome to Student Management System</h2>
+        <button id="btn-login">Student Login</button>
+        <button id="btn-login">Parent Login</button>
+        <button id="btn-login">Admin Login</button>
+
+    </section>
+    
+    <!-- ==== SLIDE-IN USER SIDEBAR ==== -->
+    <button id="side_btn">@</button>
+    <div class="side-panel" id="sidePanel">
+        <button class="close-btn" id="closeBtn"> &times;</button>
+
+        <h2>Admin</h2>
+        <hr>
+        <a href="#">Dashboard</a>
+        <a href="#">Admin</a>
+        <a href="#">Teacher</a>
+        <a href="#">Student</a>
+        <a href="#">Parent</a>
+
+        <div class="menu-item" onclick="toggleMenu('academicsMenu',this)">
+           <span>Academics</span>
+           <span class="arrow">&lt;</span>
+        </div>
+        
+        <div id="academicsMenu" class="subMenu">
+           <a href="#">Class</a>
+           <a href="#">Subject</a>
+           <a href="#">Assign Subject</a>
+           <a href="#">Syllabus</a>
+           <a href="#">Class Timetable</a>
+           <a href="#">Assign Class Teacher</a>
+
+        </div>
+
+        <a href="#">Fees Collection</a>
+        <a href="#">Examinations</a>
+        <a href="#">Attendance</a>
+        <a href="#">Communicate</a>
+        <a href="#">My Account</a>
+        <a href="#">Setting</a>
+        <a href="#">Change Password</a>
+        <a href="#">Logout</a>      
+    </div>
+
+    <!-- Add Student Section -->
+    <section id="add" class="section">
+        <h2>Add New Student</h2>
+
+        <form>
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter student name">
+
+            <label>Roll Number</label>
+            <input type="text" placeholder="Enter roll number">
+
+            <label>Course</label>
+            <input type="text" placeholder="Enter course">
+
+            <label>Year</label>
+            <select>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+            </select>
+
+            <button type="submit">Add Student</button>
+        </form>
+    </section>
+
+     <!-- ===== Login Popup ===== -->
+    <div id="loginPopup" class="popup-container">
+    <div class="popup-box">
+      <span class="close-btn" onclick="closePopup('loginPopup')">&times;</span>
+      <h2>Student Login</h2>
+      
+      <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <input type="email" name="email" placeholder="Email" id="email" required>
+      <input type="password" name="password" placeholder="Password" id="password" required>
+      
+      <!-- Error message hidden initially -->
+      {% comment %} <p id="login_error" style="color:red; display:none; margin-left:-20px;">Password does not match!</p> {% endcomment %}
+
+      <button onclick="login()" class="popup-btn" type="submit">Login</button>
+      </form>
+      
+      {% if login_error %}
+        <p style="color:red; margin: 5px 0 10px 0; display:block; ">
+        {{ login_error }}
+        </p>
+      {% endif %}
+
+      <p><a href="">Forgot Password?</a></p>
+      <p><a href="#" onclick="switchPopup('loginPopup','signupPopup')">Register New Student</a></p>
+        
+    </div>
+    </div>
+
+      <!-- ===== Signup Popup ===== -->
+  <div id="signupPopup" class="popup-container">
+    <div class="popup-box">
+      <span class="close-btn" onclick="closePopup('signupPopup')">&times;</span>
+      <h2>Student Registration</h2>
+      <form method="POST" action="{% url 'signup' %}">
+      {% csrf_token %}
+      <input type="text" name="admission_no" placeholder="Admission No" required>
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="date" name="dob" placeholder="Date of Birth" required>
+      <input type="tel" name="mobile" placeholder="Mobile Number" required>
+      <input type="password" name="password" id="signup_password" placeholder="Password" oninput="checkPassword()" required>
+      <input type="password"name="confirm_password" id="confirm_password" placeholder="Confirm Password" oninput="checkPassword()" required>
+
+      <select name="role" required>
+        <option value="" disabled selected>Select Role</option>
+        <option value="student">Student</option>
+        <option value="parent">Parent</option>
+        <option value="teacher">Teacher</option>
+        <option value="principal">Principal</option>
+     </select>
+
+     {% if signup_error %}
+      <p id="signup_error" style="color:red; margin: 5px 0px 20px 25px; display:block;">
+        {{ signup_error }}
+      </p>
+     {% endif %}
+
+
+       <!-- Error message hidden initially -->
+      <p id="errorMsg" style="color:red; display:none; margin-left:25px;">Incorrect Password!</p>
+
+      <button id="signupBtn" type="submit" class="popup-btn" disabled>Sign Up</button>
+      </form>
+      <p>Already have an account? 
+      <a href="#" onclick="switchPopup('signupPopup','loginPopup')">Login</a>
+      </p>
+    </div>
+  </div>
+
+
+  <footer>
+  </footer>
+   <script>
+(function () {
+  // run after DOM is ready
+  function onReady(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  onReady(function () {
+
+    // Helper: find error element by a set of possible ids or a class
+    function findSignupErrorEl() {
+      const ids = ['signup_error', 'signup_error_msg', 'error_text', 'signupError', 'signupErrorMsg'];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) return el;
+      }
+      const byClass = document.querySelector('.signup-error');
+      if (byClass) return byClass;
+      return null;
+    }
+
+    function findLoginErrorEl() {
+      const ids = ['login_error', 'login_error_msg', 'loginError'];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) return el;
+      }
+      const byClass = document.querySelector('.login-error');
+      if (byClass) return byClass;
+      return null;
+    }
+
+    // sessionStorage key to remember closed popups across reloads in this tab
+    const CLOSED_POPUPS_KEY = 'closed_popups_v1';
+    let closedPopups = {};
+    try {
+      closedPopups = JSON.parse(sessionStorage.getItem(CLOSED_POPUPS_KEY) || '{}');
+    } catch (e) {
+      closedPopups = {};
+    }
+
+    // Save closed state
+    function markClosed(id) {
+      closedPopups[id] = true;
+      try { sessionStorage.setItem(CLOSED_POPUPS_KEY, JSON.stringify(closedPopups)); } catch(e){ /* ignore */ }
+    }
+    function isClosed(id) {
+      return !!closedPopups[id];
+    }
+
+    // Open popup (respect closed flag)
+    window.openPopup = function (id) {
+      if (isClosed(id)) {
+        console.log('openPopup prevented by closed flag for', id);
+        return;
+      }
+      const el = document.getElementById(id);
+      if (!el) { console.warn('openPopup: element not found', id); return; }
+      el.style.display = 'flex';
+    };
+
+    // Close popup: hide element, remove backend error, reset form, mark closed in sessionStorage
+    window.closePopup = function (id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+      else console.warn('closePopup: element not found', id);
+
+      // remove/hide signup error
+      const signupErr = findSignupErrorEl();
+      if (signupErr) {
+        try { signupErr.remove(); console.log('Removed signup error element.'); }
+        catch (e) { signupErr.style.display='none'; signupErr.innerText=''; }
+      }
+
+      // remove/hide login error
+      const loginErr = findLoginErrorEl();
+      if (loginErr) {
+        try { loginErr.remove(); console.log('Removed login error element.'); }
+        catch (e) { loginErr.style.display='none'; loginErr.innerText=''; }
+      }
+
+      // reset the form inside the popup
+      try {
+        const form = el ? el.querySelector('form') : document.querySelector('#' + id + ' form');
+        if (form) form.reset();
+      } catch (e) { console.warn('form reset failed', e); }
+
+      // mark closed so server auto-open won't reopen during reloads in this tab
+      markClosed(id);
+    };
+
+    // Switch popup: close then open (works with sessionStorage)
+    window.switchPopup = function (closeId, openId) {
+      window.closePopup(closeId);
+      // clear closed flag for the popup we intend to open now (user explicitly opened it)
+      try {
+        delete closedPopups[openId];
+        sessionStorage.setItem(CLOSED_POPUPS_KEY, JSON.stringify(closedPopups));
+      } catch(e){}
+      window.openPopup(openId);
+    };
+
+    // Password check helper (existing behavior)
+    window.checkPassword = window.checkPassword || function () {
+      const pw = document.getElementById('signup_password');
+      const cp = document.getElementById('confirm_password');
+      const msg = document.getElementById('errorMsg');
+      const btn = document.getElementById('signupBtn');
+      if (!msg || !btn || !pw || !cp) return;
+      btn.disabled = true;
+      if (!cp.value) { msg.style.display = 'none'; return; }
+      if (pw.value === cp.value) { msg.style.display='none'; btn.disabled=false; }
+      else { msg.style.display='block'; btn.disabled=true; }
+    };
+
+    // Ensure your side panel handlers exist (they rely on DOM)
+    const sideBtn = document.getElementById('side_btn');
+    if (sideBtn) sideBtn.onclick = function(e){ e.preventDefault(); document.getElementById('sidePanel').classList.add('open'); };
+    const closeSideBtn = document.getElementById('closeBtn');
+    if (closeSideBtn) closeSideBtn.onclick = function(){ document.getElementById('sidePanel').classList.remove('open'); };
+
+    // small helper to toggle submenus
+    window.toggleMenu = window.toggleMenu || function(id, element){
+      const subMenu = document.getElementById(id);
+      if (!subMenu) return;
+      if (subMenu.style.display === 'block') { subMenu.style.display = 'none'; element.classList.remove('active'); }
+      else { subMenu.style.display = 'block'; element.classList.add('active'); }
+    };
+
+    // If server rendered popup flag (Django), open it only if user hasn't closed it in this tab
+    {% if popup == 'login' %}
+      setTimeout(function(){ if(!isClosed('loginPopup')) openPopup('loginPopup'); }, 50);
+    {% elif popup == 'signup' %}
+      setTimeout(function(){ if(!isClosed('signupPopup')) openPopup('signupPopup'); }, 50);
+    {% endif %}
+
+    // Debug function you can call in console: debugSignupPopup()
+    window.debugSignupPopup = function(){
+      console.log('signup error element:', findSignupErrorEl());
+      console.log('login error element:', findLoginErrorEl());
+      console.log('closedPopups:', closedPopups);
+      console.log('signupPopup element:', document.getElementById('signupPopup'));
+    };
+
+  }); // onReady
+})(); // closure
+</script>
+
+
+</body>
+</html>

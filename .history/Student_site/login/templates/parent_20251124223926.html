@@ -1,0 +1,8 @@
+<h1>Parent Lo</h1>
+{% if messages %}
+  <script>
+    {% for message in messages %}
+      alert("{{ message }}");
+    {% endfor %}
+  </script>
+{% endif %}

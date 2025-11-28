@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial;
+        background: #f4f6f9;
+        overflow-x: hidden;
+    }
+
+    /* SIDE PANEL */
+    .side-panel {
+        width: 250px;
+        background: #1e293b;
+        color: white;
+        height: 100vh;
+        position: fixed;
+        left: -250px;
+        top: 0;
+        padding: 20px;
+        transition: 0.4s;
+        overflow-y: auto;
+    }
+
+    .side-panel.open {
+        left: 0;
+    }
+
+    .side-panel h2 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .side-panel a, .menu-item {
+        display: block;
+        padding: 12px;
+        margin: 5px 0;
+        background: #334155;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .side-panel a:hover, .menu-item:hover {
+        background: #475569;
+    }
+
+    .subMenu {
+        display: none;
+        margin-left: 15px;
+    }
+
+    /* TOP BAR */
+    .topbar {
+        width: 100%;
+        height: 60px;
+        background: #0f172a;
+        color: white;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    #menuBtn {
+        font-size: 28px;
+        cursor: pointer;
+        margin-right: 20px;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+        transition: 0.4s;
+    }
+
+    .main-content.shift {
+        margin-left: 250px;
+    }
+
+    /* PAGE SECTIONS */
+    .page {
+        display: none;
+    }
+
+    .page.active {
+        display: block;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <span id="menuBtn">&#9776;</span>
+    <h2>Admin Dashboard</h2>
+</div>
+
+<!-- SIDE PANEL -->
+<div class="side-panel" id="sidePanel">
+    <h2>Admin</h2>
+    <hr>
+
+    <a onclick="showPage('dashboard')">Dashboard</a>
+    <a onclick="showPage('admin')">Admin</a>
+    <a onclick="showPage('teacher')">Teacher</a>
+    <a onclick="showPage('student')">Student</a>
+    <a onclick="showPage('parent')">Parent</a>
+
+    <div class="menu-item" onclick="toggleMenu('academicsMenu')">
+        <span>Academics</span>
+    </div>
+
+    <div id="academicsMenu" class="subMenu">
+        <a onclick="showPage('classPage')">Class</a>
+        <a onclick="showPage('subjectPage')">Subject</a>
+        <a onclick="showPage('assignSubject')">Assign Subject</a>
+        <a onclick="showPage('syllabus')">Syllabus</a>
+        <a onclick="showPage('timetable')">Class Timetable</a>
+        <a onclick="showPage('assignTeacher')">Assign Class Teacher</a>
+    </div>
+
+    <a onclick="showPage('fees')">Fees Collection</a>
+    <a onclick="showPage('exam')">Examinations</a>
+    <a onclick="showPage('attendance')">Attendance</a>
+    <a onclick="showPage('communicate')">Communicate</a>
+    <a onclick="showPage('account')">My Account</a>
+    <a onclick="showPage('setting')">Settings</a>
+    <a onclick="showPage('changepass')">Change Password</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="mainContent">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="dashboard">
+        <h2>Dashboard</h2>
+        <div class="card">Total Students: 450</div>
+        <div class="card">Total Teachers: 28</div>
+        <div class="card">Classes Running: 25</div>
+        <div class="card">Fees Pending: ₹1,24,000</div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div class="page" id="admin">
+        <h2>Admin Management</h2>
+        <div class="card">Add Admin, view admin list, delete admin...</div>
+    </div>
+
+    <!-- TEACHER PAGE -->
+    <div class="page" id="teacher">
+        <h2>Teacher Management</h2>
+        <div class="card">Add Teachers, view teacher list, assign subjects...</div>
+    </div>
+
+    <!-- STUDENT PAGE -->
+    <div class="page" id="student">
+        <h2>Student Management</h2>
+        <div class="card">Add Students, view list, promote class...</div>
+    </div>
+
+    <!-- PARENT -->
+    <div class="page" id="parent">
+        <h2>Parent Management</h2>
+        <div class="card">Add Parents, link with students...</div>
+    </div>
+
+    <!-- ACADEMICS -->
+
+    <div class="page" id="classPage">
+        <h2>Manage Class</h2>
+        <div class="card">Create classes, edit, delete...</div>
+    </div>
+
+    <div class="page" id="subjectPage">
+        <h2>Manage Subjects</h2>
+        <div class="card">Add subjects, view subject list...</div>
+    </div>
+
+    <div class="page" id="assignSubject">
+        <h2>Assign Subject to Class</h2>
+        <div class="card">Assign subjects to classes...</div>
+    </div>
+
+    <div class="page" id="syllabus">
+        <h2>Syllabus</h2>
+        <div class="card">Upload syllabus, view syllabus...</div>
+    </div>
+
+    <div class="page" id="timetable">
+        <h2>Class Timetable</h2>
+        <div class="card">Create timetable for each class...</div>
+    </div>
+
+    <div class="page" id="assignTeacher">
+        <h2>Assign Class Teacher</h2>
+        <div class="card">Assign teacher to specific class...</div>
+    </div>
+
+
+    <!-- FEES -->
+    <div class="page" id="fees">
+        <h2>Fees Collection</h2>
+        <div class="card">Collect fees, view fee report...</div>
+    </div>
+
+    <!-- EXAM -->
+    <div class="page" id="exam">
+        <h2>Examination Module</h2>
+        <div class="card">Add exams, enter marks, publish results...</div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="page" id="attendance">
+        <h2>Attendance Module</h2>
+        <div class="card">Mark daily attendance...</div>
+    </div>
+
+    <!-- COMMUNICATION -->
+    <div class="page" id="communicate">
+        <h2>Communicate</h2>
+        <div class="card">Send SMS, notifications, announcements...</div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="page" id="account">
+        <h2>My Account</h2>
+        <div class="card">Update profile details...</div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="setting">
+        <h2>Settings</h2>
+        <div class="card">Website settings, profile settings...</div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div class="page" id="changepass">
+        <h2>Change Password</h2>
+        <div class="card">Old Password, New Password, Confirm...</div>
+    </div>
+
+</div>
+
+<script>
+    let menuBtn = document.getElementById("menuBtn");
+    let sidePanel = document.getElementById("sidePanel");
+    let mainContent = document.getElementById("mainContent");
+
+    menuBtn.onclick = function () {
+        sidePanel.classList.toggle("open");
+        mainContent.classList.toggle("shift");
+    }
+
+    function toggleMenu(id) {
+        let menu = document.getElementById(id);
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function showPage(pageId) {
+        let pages = document.querySelectorAll(".page");
+        pages.forEach(p => p.classList.remove("active"));
+
+        document.getElementById(pageId).classList.add("active");
+    }
+</script>
+
+</body>
+</html>

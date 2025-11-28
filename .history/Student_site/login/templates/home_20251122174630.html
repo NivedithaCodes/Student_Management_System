@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <!-- Link to static CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#students">Students</a></li>
+                <li><a href="#add">Add Student</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home" class="section">
+        <h2>Welcome to Student Management System</h2>
+        <button id="btn-login">Student Login</button>
+    </section>
+
+    <!-- Students List Section -->
+    {% comment %} <section id="students" class="section">
+        <h2>Students List</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>101</td>
+                    <td>Gopika T</td>
+                    <td>Computer Science</td>
+                    <td>3rd Year</td>
+                </tr>
+
+                <tr>
+                    <td>102</td>
+                    <td>Niveditha KS</td>
+                    <td>Artificial Intelligence</td>
+                    <td>4th Year</td>
+                </tr>
+
+                <tr>
+                    <td>103</td>
+                    <td>Aparna Chandhran T</td>
+                    <td>Electronics</td>
+                    <td>2nd Year</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </section> {% endcomment %}
+    
+    <!-- ==== SLIDE-IN USER SIDEBAR ==== -->
+    <button id="side_btn">@</button>
+    <div class="side-panel" id="sidePanel">
+        <button class="close-btn" id="closeBtn"> &times;</button>
+
+        <h2>Admin</h2>
+        <hr>
+        <a href="#">Dashboard</a>
+        <a href="#">Admin</a>
+        <a href="#">Teacher</a>
+        <a href="#">Student</a>
+        <a href="#">Parent</a>
+
+        <div class="menu-item" onclick="toggleMenu('academicsMenu',this)">
+           <span>Academics</span>
+           <span class="arrow">&lt;</span>
+        </div>
+        
+        <div id="academicsMenu" class="subMenu">
+           <a href="#">Class</a>
+           <a href="#">Subject</a>
+           <a href="#">Assign Subject</a>
+           <a href="#">Syllabus</a>
+           <a href="#">Class Timetable</a>
+           <a href="#">Assign Class Teacher</a>
+
+        </div>
+
+        <a href="#">Fees Collection</a>
+        <a href="#">Examinations</a>
+        <a href="#">Attendance</a>
+        <a href="#">Communicate</a>
+        <a href="#">My Account</a>
+        <a href="#">Setting</a>
+        <a href="#">Change Password</a>
+        <a href="#">Logout</a>      
+    </div>
+
+    <!-- Add Student Section -->
+    <section id="add" class="section">
+        <h2>Add New Student</h2>
+
+        <form>
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter student name">
+
+            <label>Roll Number</label>
+            <input type="text" placeholder="Enter roll number">
+
+            <label>Course</label>
+            <input type="text" placeholder="Enter course">
+
+            <label>Year</label>
+            <select>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+            </select>
+
+            <button type="submit">Add Student</button>
+        </form>
+    </section>
+
+     <!-- ===== Login Popup ===== -->
+    <div id="loginPopup" class="popup-container">
+    <div class="popup-box">
+      <span class="close-btn" onclick="closePopup('loginPopup')">&times;</span>
+      <h2>Login</h2>
+      
+      <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <input type="email" name="email" placeholder="Email" id="email" required>
+      <input type="password" name="password" placeholder="Password" id="password" required>
+      <button onclick="login()" class="popup-btn" type="submit">Login</button>
+      </form>
+      <p style="color:red;">{{ error }}</p>
+
+      <p>Register New St<a href="#" onclick="switchPopup('loginPopup','signupPopup')">Sign up</a></p>
+        
+    </div>
+    </div>
+
+      <!-- ===== Signup Popup ===== -->
+  <div id="signupPopup" class="popup-container">
+    <div class="popup-box">
+      <span class="close-btn" onclick="closePopup('signupPopup')">&times;</span>
+      <h2>Sign Up</h2>
+      <form method="POST" action="{% url 'signup' %}">
+      {% csrf_token %}
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" id="signup_password" placeholder="Password" oninput="checkPassword()" required>
+      <input type="password"name="confirm_password" id="confirm_password" placeholder="Confirm Password" oninput="checkPassword()" required>
+       <!-- Error message hidden initially -->
+      <p id="errorMsg" style="color:red; display:none; margin-left:-20px;">Password does not match!</p>
+
+      <button id="signupBtn" type="submit" class="popup-btn" disabled>Sign Up</button>
+      </form>
+      <p>Already have an account? 
+      <a href="#" onclick="switchPopup('signupPopup','loginPopup')">Login</a>
+      </p>
+    </div>
+  </div>
+
+
+    <footer>
+    </footer>
+    <script>
+        
+        
+        /* Show panel */
+        document.getElementById('side_btn').onclick = function (e) {
+            e.preventDefault();
+            document.getElementById('sidePanel').classList.add('open');
+        }
+
+        // Close panel
+        document.getElementById('closeBtn').onclick = function () {
+            document.getElementById('sidePanel').classList.remove('open');
+        }
+
+        //submenu 
+        function toggleMenu(id,element){
+            const subMenu=document.getElementById(id);
+
+            if(subMenu.style.display === 'block'){
+                subMenu.style.display = 'none';
+                element.classList.remove('active');
+            }
+            else{
+                subMenu.style.display = "block"
+                element.classList.add('active');
+            }
+        } 
+
+  function checkPassword() {
+  let password = document.getElementById("signup_password").value;
+  let confirm_password = document.getElementById("confirm_password").value;
+  let msg = document.getElementById("errorMsg");
+  let btn = document.getElementById("signupBtn");
+
+   // Disable button initially
+    btn.disabled = true;
+
+  if (confirm_password === "") {
+    msg.style.display = "none"; // hide when user has not typed anything
+    return;
+  }
+
+  if (password === confirm_password) {
+    msg.style.display = "none"; // match → hide message
+    btn.disabled = false;
+  } else {
+    msg.style.display = "block"; // mismatch → show message
+    btn.disabled = true;
+  }
+}
+
+ //  for login and signup display (URL)
+
+  function openPopup(id) {
+      document.getElementById(id).style.display = "flex";
+    }
+  function closePopup(id) {
+      document.getElementById(id).style.display = "none";
+    }
+  function switchPopup(closeId, openId) {
+      closePopup(closeId);
+      openPopup(openId);
+    }
+
+  //  <!-- Django popup trigger -->
+
+  {% if popup == 'login' %}
+    window.onload = function () 
+    {
+      openPopup('loginPopup');
+   }
+  {% elif popup == 'signup' %}
+  window.onload = function () 
+  {
+      openPopup('signupPopup');
+  }
+  {% endif %}
+
+</script>
+
+</body>
+</html>

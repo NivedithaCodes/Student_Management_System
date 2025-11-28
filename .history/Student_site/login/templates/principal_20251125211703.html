@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard</title>
+
+<!-- Google Icons -->
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #f4f6f9;
+    }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar {
+        height: 100vh;
+        width: 260px;
+        background: #1a237e;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 20px;
+        transition: 0.3s;
+        overflow-y: auto;
+    }
+
+    .sidebar h2 {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .sidebar a {
+        display: block;
+        color: #fff;
+        padding: 14px 25px;
+        text-decoration: none;
+        font-size: 17px;
+        border-left: 4px solid transparent;
+        transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+        background: #303f9f;
+        border-left: 4px solid #ffeb3b;
+    }
+
+    /* ---------- Top bar ---------- */
+    .topbar {
+        height: 60px;
+        background: white;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        margin-left: 260px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: 0.3s;
+    }
+
+    .menu-icon {
+        font-size: 30px;
+        cursor: pointer;
+        color: #1a237e;
+    }
+
+    .topbar h1 {
+        margin-left: 15px;
+        font-size: 23px;
+        color: #1a237e;
+    }
+
+    /* ---------- Main Content ---------- */
+    .content {
+        margin-left: 260px;
+        padding: 30px;
+        transition: 0.3s;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .card h3 {
+        color: #1a237e;
+        margin-bottom: 10px;
+        font-size: 20px;
+    }
+
+    .card p {
+        font-size: 14px;
+        color: #555;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 768px) {
+        .sidebar {
+            left: -260px;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .topbar {
+            margin-left: 0;
+        }
+        .content {
+            margin-left: 0;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+<!-- ---------- Sidebar ---------- -->
+<div class="sidebar" id="sidebar">
+    <h2>Dashboard</h2>
+    <a href="#"><span class="material-icons">home</span> Home</a>
+    <a href="#"><span class="material-icons">school</span> Attendance</a>
+    <a href="#"><span class="material-icons">assignment</span> Assignments</a>
+    <a href="#"><span class="material-icons">grade</span> Grades</a>
+    <a href="#"><span class="material-icons">person</span> Profile</a>
+    <a href="#"><span class="material-icons">logout</span> Logout</a>
+</div>
+
+<!-- ---------- Top Bar ---------- -->
+<div class="topbar">
+    <span class="material-icons menu-icon" onclick="toggleSidebar()">menu</span>
+    <h1>Welcome, Student</h1>
+</div>
+
+<!-- ---------- Main Content ---------- -->
+<div class="content">
+    <div class="cards">
+        <div class="card">
+            <h3>Attendance</h3>
+            <p>View your attendance details.</p>
+        </div>
+
+        <div class="card">
+            <h3>Assignments</h3>
+            <p>Check your upcoming assignments.</p>
+        </div>
+
+        <div class="card">
+            <h3>Exams</h3>
+            <p>See your exam schedule.</p>
+        </div>
+
+        <div class="card">
+            <h3>Messages</h3>
+            <p>View teacher announcements.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ---------- JavaScript ---------- -->
+<script>
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+    }
+</script>
+
+</body>
+</html>
+ss

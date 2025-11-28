@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Management System</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Sidebar */
+    .side-panel {
+        width: 250px;
+        background: #1b1933;
+        color: #d1d5db;
+        flex-shrink: 0;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+        position: fixed;
+        height: 100%;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .side-panel.open { transform: translateX(0); }
+    .side-panel h2 { text-align: center; margin-bottom: 15px; color: #fff; }
+    .side-panel a, .menu-item { display: block; padding: 10px 15px; color: #d1d5db; text-decoration: none; cursor: pointer; border-radius: 6px; margin-bottom: 5px; }
+    .side-panel a:hover, .menu-item:hover { background: #374151; }
+    .menu-item { display:flex; justify-content: space-between; align-items: center; }
+    .arrow { transition: 0.3s; }
+    .menu-item.active .arrow { transform: rotate(-90deg); }
+    .subMenu { display:none; flex-direction: column; padding-left: 15px; }
+    .subMenu a { padding: 8px 20px; font-size: 0.95em; }
+
+    /* Navbar */
+    .navbar { background: #4e73df; color: white; padding: 15px 25px; font-size: 22px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    #side_btn { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+    .logout { background: white; color: #4e73df; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; }
+
+    /* Main content */
+    .main-content { margin-left: 0; flex: 1; padding: 20px; overflow-y: auto; transition: margin-left 0.3s ease; }
+    .main-content.shifted { margin-left: 250px; }
+    .content-page { display: none; }
+    .content-page.active { display: block; }
+
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; transition: 0.3s; }
+    .card:hover{ transform: scale(1.03); }
+    .card i{ font-size: 40px; color: #4e73df; margin-bottom: 10px; }
+    .card h3{ margin: 10px 0; color:#333; }
+    .card p{ color:#666; font-size:14px; margin-bottom:15px; }
+    .card a{ display:inline-block; padding:8px 16px; background:#4e73df; color:white; border-radius:8px; text-decoration:none; font-size:14px; }
+
+    table{ width: 100%; border-collapse: collapse; background:white; margin-top: 10px; }
+    table, th, td{ border:1px solid #ddd; }
+    th, td{ padding:8px; text-align:left; }
+    th{ background:#4e73df; color:white; }
+
+    button.action-btn{ padding:6px 10px; margin-right:5px; border:none; border-radius:5px; cursor:pointer; }
+    button.add-btn{ background:#4e73df; color:white; }
+    button.edit-btn{ background:#facc15; color:#000; }
+    button.delete-btn{ background:#ef4444; color:white; }
+
+    /* Modal */
+    .modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999; }
+    .modal-content{ background:white; padding:20px; border-radius:8px; width:400px; max-width:90%; }
+    .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+    .modal-header h3{ margin:0; }
+    .close-modal{ cursor:pointer; font-size:22px; font-weight:bold; }
+
+    form input, form select, form textarea{ width:100%; padding:8px; margin:5px 0 15px 0; border-radius:6px; border:1px solid #ccc; }
+    form button{ padding:10px 20px; background:#4e73df; color:white; border:none; border-radius:6px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="side-panel" id="sidePanel">
+    <h2>Admin</h2>
+    <hr>
+    <a onclick="showPage('dashboardPage')">Dashboard</a>
+    <a onclick="showPage('adminPage')">Admin</a>
+    <a onclick="showPage('teacherPage')">Teacher</a>
+    <a onclick="showPage('studentPage')">Student</a>
+    <a onclick="showPage('parentPage')">Parent</a>
+
+    <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+        <span>Academics</span>
+        <span class="arrow">&lt;</span>
+    </div>
+    <div id="academicsMenu" class="subMenu">
+        <a onclick="showPage('classPage')">Class</a>
+        <a onclick="showPage('subjectPage')">Subject</a>
+        <a onclick="showPage('assignPage')">Assign Subject</a>
+        <a onclick="showPage('syllabusPage')">Syllabus</a>
+        <a onclick="showPage('timetablePage')">Timetable</a>
+    </div>
+
+    <a onclick="showPage('feesPage')">Fees Collection</a>
+    <a onclick="showPage('examsPage')">Examinations</a>
+    <a onclick="showPage('attendancePage')">Attendance</a>
+    <a onclick="showPage('settingsPage')">Settings</a>
+</div>
+
+<!-- Main content -->
+<div class="main-content" id="mainContent">
+    <div class="navbar">
+        <button id="side_btn"><i class="fa-solid fa-bars"></i></button>
+        Student Management System
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="content-page active" id="dashboardPage">
+        <h2>Dashboard</h2>
+        <p>Welcome to your student management dashboard.</p>
+        <div class="dashboard-grid">
+            <div class="card">
+                <i class="fa-solid fa-user-graduate"></i>
+                <h3>My Profile</h3>
+                <p>View or edit your profile details.</p>
+                <a onclick="showPage('studentPage')">Open</a>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-book"></i>
+                <h3>Courses</h3>
+                <p>Check courses you are enrolled in.</p>
+                <a onclick="showPage('subjectPage')">Open</a>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <h3>Attendance</h3>
+                <p>View your attendance record.</p>
+                <a onclick="showPage('attendancePage')">Open</a>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Exams</h3>
+                <p>Check marks & results.</p>
+                <a onclick="showPage('examsPage')">Open</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin -->
+    <div class="content-page" id="adminPage">
+        <h2>Admin Panel</h2>
+        <button class="action-btn add-btn" onclick="openModal('adminModal')">Add Admin</button>
+        <table>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+            <tr><td>1</td><td>Admin1</td><td>admin1@example.com</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="openModal('adminModal')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Teacher -->
+    <div class="content-page" id="teacherPage">
+        <h2>Teacher Management</h2>
+        <button class="action-btn add-btn" onclick="openModal('teacherModal')">Add Teacher</button>
+        <table>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Subject</th><th>Actions</th></tr>
+            <tr><td>1</td><td>John Doe</td><td>john@example.com</td><td>Math</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="openModal('teacherModal')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Student -->
+    <div class="content-page" id="studentPage">
+        <h2>Student Management</h2>
+        <button class="action-btn add-btn" onclick="openModal('studentModal')">Add Student</button>
+        <table>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Class</th><th>Actions</th></tr>
+            <tr><td>1</td><td>Jane Doe</td><td>jane@example.com</td><td>10A</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="openModal('studentModal')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Parent -->
+    <div class="content-page" id="parentPage">
+        <h2>Parent Information</h2>
+        <button class="action-btn add-btn" onclick="openModal('parentModal')">Add Parent</button>
+        <table>
+            <tr><th>ID</th><th>Parent</th><th>Student</th><th>Contact</th><th>Actions</th></tr>
+            <tr><td>1</td><td>Mary Doe</td><td>Jane Doe</td><td>1234567890</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="openModal('parentModal')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Academics example page -->
+    <div class="content-page" id="classPage">
+        <h2>Class Management</h2>
+        <button class="action-btn add-btn" onclick="openModal('classModal')">Add Class</button>
+        <table>
+            <tr><th>ID</th><th>Class</th><th>Section</th><th>Actions</th></tr>
+            <tr><td>1</td><td>10</td><td>A</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="openModal('classModal')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Modal Template -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Admin Form</h3>
+                <span class="close-modal" onclick="closeModal('adminModal')">&times;</span>
+            </div>
+            <form>
+                <input type="text" placeholder="Admin Name">
+                <input type="email" placeholder="Email">
+                <input type="password" placeholder="Password">
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- You can duplicate the above modal for studentModal, teacherModal, parentModal, classModal, etc. -->
+</div>
+
+<script>
+    const sideBtn = document.getElementById('side_btn');
+    const sidePanel = document.getElementById('sidePanel');
+    const mainContent = document.getElementById('mainContent');
+
+    sideBtn.onclick = function(){
+        sidePanel.classList.toggle('open');
+        mainContent.classList.toggle('shifted');
+    }
+
+    function toggleMenu(id, element){
+        const subMenu = document.getElementById(id);
+        if(subMenu.style.display === 'block'){
+            subMenu.style.display = 'none';
+            element.classList.remove('active');
+        } else {
+            subMenu.style.display = 'block';
+            element.classList.add('active');
+        }
+    }
+
+    function showPage(pageId){
+        document.querySelectorAll('.content-page').forEach(page=>{
+            page.classList.remove('active');
+        });
+        document.getElementById(pageId).classList.add('active');
+        sidePanel.classList.remove('open');
+        mainContent.classList.remove('shifted');
+    }
+
+    function openModal(modalId){
+        document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId){
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function deleteRow(btn){
+        const row = btn.parentElement.parentElement;
+        row.remove();
+    }
+
+</script>
+
+</body>
+</html>

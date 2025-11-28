@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Poppins, sans-serif;
+        background: #f4f6f9;
+    }
+
+    /* ---------- NAVBAR ---------- */
+    .navbar {
+        background: #4e73df;
+        color: white;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar i {
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    .logout {
+        margin-left: auto;
+        background: white;
+        color: #4e73df;
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* ---------- SIDE PANEL ---------- */
+    .side-panel {
+        position: fixed;
+        top: 0;
+        left: -330px; /* hidden initially */
+        height: 100%;
+        width: 330px;
+        background: #1b1933;
+        padding: 28px 24px;
+        transition: 0.35s ease;
+        box-shadow: 3px 0 8px rgba(0,0,0,0.3);
+        z-index: 999;
+        overflow-y: auto;
+        color: #e5e7eb;
+    }
+
+    .side-panel.open {
+        left: 0;
+    }
+
+    .close-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.8em;
+        color: white;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+    }
+
+    .side-panel h2 {
+        margin-top: 25px;
+        text-align: center;
+        color: #fff;
+        font-size: 24px;
+    }
+
+    .side-panel a, .menu-item {
+        display: block;
+        padding: 12px 18px;
+        margin: 4px 0;
+        color: #e5e7eb;
+        text-decoration: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .side-panel a:hover,
+    .menu-item:hover {
+        background: #374151;
+    }
+
+    .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .arrow {
+        transition: 0.3s;
+    }
+
+    .menu-item.active .arrow {
+        transform: rotate(-90deg);
+    }
+
+    .subMenu {
+        display: none;
+        padding-left: 15px;
+    }
+
+    .subMenu a {
+        padding: 10px 20px;
+        font-size: 15px;
+        color: #d1d5db;
+    }
+
+    /* ---------- MAIN CONTENT ---------- */
+    .content {
+        padding: 100px 30px 30px;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+        text-align: center;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card i {
+        font-size: 40px;
+        color: #4e73df;
+        margin-bottom: 12px;
+    }
+
+    /* Slide Panel */
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: -250px;      /* hidden position */
+    width: 250px;
+    height: 100%;
+    background: #1b1933;
+    color: #d1d5db;
+    padding: 30px;
+    transition: 0.4s;
+    z-index: 1000;
+}
+
+/* Side Panel show */
+.side-panel.open {
+    left: 0;
+}
+
+/* Shift main content when open */
+body.shifted .dashboard-container,
+body.shifted .navbar {
+    margin-left: 250px;
+    transition: 0.4s;
+}
+
+/* Toggle button */
+.toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 26px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+
+</style>
+</head>
+<body>
+
+ <div class="navbar">
+  <button id="side_btn" class="toggle-btn">
+      <i id="icon" class="fa-solid fa-bars"></i>
+  </button>
+
+  Student Dashboard
+  <a href="{% url 'logout' %}" class="logout">Logout</a>
+</div>
+
+<div class="side-panel" id="sidePanel">
+    <h2>Students</h2>
+    <hr>
+    <a href="#">Home</a>
+    <a href="#">Students</a>
+    <a href="#">Courses</a>
+    <a href="#">Enrollments</a>
+    <a href="#">Attendance</a>
+    <a href="#">Examinations</a>
+    <a href="#">Setting</a>
+    <a href="#">Change Password</a>
+    <a href="#">Logout</a>      
+</div>
+
+
+<!-- ---------- DASHBOARD CONTENT ---------- -->
+<div class="content">
+    <div class="cards">
+
+        <div class="card">
+            <i class="fa-solid fa-users"></i>
+            <h3>Total Students</h3>
+            <p>Manage all students details.</p>
+        </div>
+
+        <div class="card">
+            <i class="fa-solid fa-chalkboard-teacher"></i>
+            <h3>Total Teachers</h3>
+            <p>Manage teachers & departments.</p>
+        </div>
+
+        <div class="card">
+            <i class="fa-solid fa-building-columns"></i>
+            <h3>Classes</h3>
+            <p>Timetables & syllabus updates.</p>
+        </div>
+
+        <div class="card">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <h3>Fees</h3>
+            <p>Track student fee records.</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ---------- JAVASCRIPT ---------- -->
+<script>
+    // OPEN PANEL
+    document.getElementById("openPanel").onclick = function () {
+        document.getElementById("sidePanel").classList.add("open");
+    };
+
+    // CLOSE PANEL
+    document.getElementById("closeBtn").onclick = function () {
+        document.getElementById("sidePanel").classList.remove("open");
+    };
+
+    // SUBMENU
+    function toggleMenu(id, element) {
+        const menu = document.getElementById(id);
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+            element.classList.remove("active");
+        } else {
+            menu.style.display = "block";
+            element.classList.add("active");
+        }
+    }
+</script>
+
+</body>
+</html>

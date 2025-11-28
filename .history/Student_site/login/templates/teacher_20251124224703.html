@@ -1,0 +1,8 @@
+<h1>Stude page</h1>
+{% if messages %}
+  <script>
+    {% for message in messages %}
+      alert("{{ message }}");
+    {% endfor %}
+  </script>
+{% endif %}

@@ -1,0 +1,133 @@
+<!-- PUT THIS IN YOUR TEMPLATE (replace your current navbar, side-panel, main content & script) -->
+
+<style>
+  :root {
+    --sidebar-width: 250px; /* change if you want smaller/larger sidebar */
+  }
+
+  /* Sidebar (from right) */
+  .side-panel {
+    position: fixed;
+    top: 0;
+    right: calc(-1 * var(--sidebar-width)); /* hidden */
+    width: var(--sidebar-width);
+    height: 100%;
+    background: #1b1933;
+    color: #d1d5db;
+    padding: 28px 20px;
+    transition: right 0.35s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  .side-panel.open { right: 0; }
+
+  /* main content container (includes navbar + dashboard) */
+  #mainContent {
+    transition: transform 0.35s ease;
+    /* keep existing layout spacing if any */
+  }
+  /* shift left by sidebar width so the right side becomes free for sidebar */
+  #mainContent.shifted {
+    transform: translateX(calc(-1 * var(--sidebar-width)));
+  }
+
+  /* make sure navbar stays on top visually */
+  .navbar { position: relative; z-index: 10; }
+
+  /* toggle button style */
+  #side_btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 6px 10px;
+  }
+
+  /* adjust page padding so content doesn't hide behind fixed navbar */
+  .dashboard-container {
+    padding: 30px;
+    box-sizing: border-box;
+  }
+</style>
+
+<!-- NAVBAR + TOGGLE BUTTON -->
+<div id="mainContent">
+  <div class="navbar" style="background:#4e73df; color:white; padding:15px 20px; display:flex; align-items:center;">
+      <button id="side_btn"><i id="menuIcon" class="fa-solid fa-bars"></i></button>
+      <div style="font-weight:700; margin-left:10px;">Student Dashboard</div>
+      <a href="{% url 'logout' %}" class="logout" style="margin-left:auto; background:white; color:#4e73df; padding:8px 12px; border-radius:8px; text-decoration:none;">Logout</a>
+  </div>
+
+  <!-- DASHBOARD CONTENT -->
+  <div class="dashboard-container">
+    <!-- your cards go here (unchanged) -->
+    <div class="card">
+        <i class="fa-solid fa-user-graduate"></i>
+        <h3>My Profile</h3>
+        <p>View or edit your student profile details.</p>
+        <a href="#">Open</a>
+    </div>
+    <!-- ... rest of cards ... -->
+  </div>
+</div>
+
+<!-- SIDE PANEL -->
+<div class="side-panel" id="sidePanel">
+  <button class="close-btn" id="closeBtn" style="background:transparent; border:none; color:#fff; font-size:22px; position:absolute; top:10px; right:14px;">&times;</button>
+
+  <h2 style="text-align:center; color:#fff; margin-top:8px;">Students</h2>
+  <hr style="border-color:#374151; margin:12px 0;">
+  <a href="#">Home</a>
+  <a href="#">Students</a>
+  <a href="#">Courses</a>
+  <a href="#">Enrollments</a>
+  <a href="#">Attendance</a>
+  <a href="#">Examinations</a>
+  <a href="#">Setting</a>
+  <a href="#">Change Password</a>
+  <a href="#">Logout</a>
+</div>
+
+<!-- SCRIPT: toggles sidebar and shifts main content -->
+<script>
+  (function(){
+    const sideBtn = document.getElementById('side_btn');
+    const menuIcon = document.getElementById('menuIcon');
+    const sidePanel = document.getElementById('sidePanel');
+    const main = document.getElementById('mainContent');
+    const closeBtn = document.getElementById('closeBtn');
+
+    function openSidebar() {
+      sidePanel.classList.add('open');
+      main.classList.add('shifted');
+      menuIcon.classList.remove('fa-bars');
+      menuIcon.classList.add('fa-xmark');
+    }
+    function closeSidebar() {
+      sidePanel.classList.remove('open');
+      main.classList.remove('shifted');
+      menuIcon.classList.remove('fa-xmark');
+      menuIcon.classList.add('fa-bars');
+    }
+
+    // toggle with same button
+    sideBtn.addEventListener('click', function () {
+      if (sidePanel.classList.contains('open')) closeSidebar();
+      else openSidebar();
+    });
+
+    // close button inside panel also closes and resets icon
+    closeBtn.addEventListener('click', closeSidebar);
+
+    // optional: click outside the panel closes it
+    document.addEventListener('click', function (e) {
+      if (!sidePanel.contains(e.target) && !sideBtn.contains(e.target) && sidePanel.classList.contains('open')) {
+        closeSidebar();
+      }
+    });
+
+    // prevent clicks inside panel from closing (handled above)
+    sidePanel.addEventListener('click', function(e){ e.stopPropagation(); });
+  })();
+</script>
