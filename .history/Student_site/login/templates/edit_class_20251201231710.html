@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Class</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 20%;
+      height:30
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 25px 30px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, select {
+      width: 30%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0,123,255,0.4);
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      width: 48%;
+    }
+
+    .btn-save {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-save:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-cancel {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-cancel:hover {
+      background-color: #545b62;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Edit Class - {{ class.name }}</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <label>Class Name</label>
+      <input type="text" name="name" value="{{ class.name }}" required />
+
+      <br>
+
+      <label>Class Teacher</label>
+      <select name="class_teacher">
+        <option value="">-- No Class Teacher --</option>
+        {% for teacher in teachers %}
+        <option value="{{ teacher.id }}" {% if class.class_teacher == teacher %}selected{% endif %}>
+          {{ teacher.name }}
+        </option>
+        {% endfor %}
+      </select>
+
+      <div class="btn-container">
+        <button type="submit" class="btn btn-save">Save Changes</button>
+        <a href="{% url 'principal_dashboard' %}" class="btn btn-cancel" style="text-align:center; padding:11px;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

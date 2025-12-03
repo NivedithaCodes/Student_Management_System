@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Class</title>
+    <style>
+      /* Simple, clean styling - can be updated later to match your theme */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        padding: 30px;
+      }
+      .container {
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      label {
+        margin-top: 10px;
+        display: block;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .btn-group {
+        display: flex;
+        justify-content: space-between;
+      }
+      .btn-save {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .btn-cancel {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Edit Class</h2>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <label for="class_name">Class Name</label>
+        <input
+          type="text"
+          id="class_name"
+          name="class_name"
+          value="{{ cls.class_name }}"
+          placeholder="Enter Class Name"
+          required
+        />
+
+        <label for="section">Section</label>
+        <input
+          type="text"
+          id="section"
+          name="section"
+          value="{{ cls.section }}"
+          placeholder="Enter Section"
+        />
+
+        <label for="max_strength">Maximum Strength</label>
+        <input
+          type="number"
+          id="max_strength"
+          name="max_strength"
+          value="{{ cls.max_strength }}"
+          placeholder="Enter Maximum Strength"
+        />
+
+        <div class="btn-group">
+          <button type="submit" class="btn-save">Save</button>
+          <a href="/principal/?tab=class" class="btn-cancel">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

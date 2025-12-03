@@ -1,0 +1,25 @@
+<h2>Edit Class</h2>
+<form method="POST" action="{% url 'edit_class' cls.id %}">
+  {% csrf_token %}
+  <label>Class Name:</label><br>
+  <input type="text" name="class_name" value="{{ cls.class_name }}" required><br>
+
+  <label>Section:</label><br>
+  <input type="text" name="section" value="{{ cls.section }}"><br>
+
+  <label>Maximum Strength:</label><br>
+  <input type="number" name="max_strength" value="{{ cls.max_strength }}"><br>
+
+  <label>Class Teacher:</label><br>
+  <select name="class_teacher">
+    <option value="">--Select Teacher--</option>
+    {% for t in teachers %}
+      <option value="{{ t.id }}" {% if cls.class_teacher and cls.class_teacher.id == t.id %}selected{% endif %}>
+        {{ t.name }}
+      </option>
+    {% endfor %}
+  </select><br>
+
+  <button type="submit">Update Class</button>
+  <a href="/principal/?tab=class"><button type="button">Cancel</button></a>
+</form>

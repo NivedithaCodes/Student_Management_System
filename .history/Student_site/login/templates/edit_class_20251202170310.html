@@ -1,0 +1,124 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Class</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 28px;
+    }
+
+    form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #555;
+    }
+
+    form input[type="text"],
+    form input[type="number"],
+    form select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    form input:focus,
+    form select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-actions button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .form-actions button[type="submit"] {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .form-actions button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    .form-actions a button {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .form-actions a button:hover {
+      background-color: #495057;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Edit Class</h2>
+  <form method="POST" action="{% url 'edit_class' cls.id %}">
+    {% csrf_token %}
+
+    <label>Class Name:</label>
+    <input type="text" name="class_name" value="{{ cls.class_name }}" required>
+
+    <label>Section:</label>
+    <input type="text" name="section" value="{{ cls.section }}">
+
+    <label>Maximum Strength:</label>
+    <input type="number" name="max_strength" value="{{ cls.max_strength }}">
+
+    <label>Class Teacher:</label>
+    <select name="class_teacher">
+      <option value="">--Select Teacher--</option>
+      {% for t in teachers %}
+        <option value="{{ t.id }}" {% if cls.class_teacher and cls.class_teacher.id == t.id %}selected{% endif %}>
+          {{ t.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <div class="form-actions">
+      <button type="submit">Update Class</button>
+      <a href="/principal/?tab=class"><button type="button">Cancel</button></a>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>

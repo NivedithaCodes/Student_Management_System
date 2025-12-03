@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Class</title>
+</head>
+<body>
+    <h2>Edit Class: {{ class.name }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <label>Class Name</label>
+        <input type="text" name="name" value="{{ class.name }}" required><br><br>
+
+        <label>Class Teacher</label>
+        <select name="class_teacher">
+            <option value="">-- None --</option>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if class.class_teacher == teacher %}selected{% endif %}>
+                {{ teacher.name }}
+            </option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>
+
+
+
+% comment %} // Show page
+
+      function showPage(pageId) {
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.classList.remove("active");
+        });
+        document.getElementById(pageId).classList.add("active");
+
+        // Close sidebar on click
+        sidePanel.classList.remove("open");
+        mainContent.classList.remove("shifted");
+      }
+
+      window.onload = function () {
+        const tab = "{{ tab }}";
+
+        document.getElementById("dashboardPage").style.display = "none";
+        document.getElementById("adminPage").style.display = "none";
+        document.getElementById("teacherPage").style.display = "none";
+        document.getElementById("studentPage").style.display = "none";
+
+        if (tab === "admin") {
+          document.getElementById("adminPage").style.display = "block";
+        } else if (tab === "teacher") {
+          document.getElementById("teacherPage").style.display = "block";
+        } else if (tab === "student") {
+          document.getElementById("studentPage").style.display = "block";
+        } else {
+          document.getElementById("dashboardPage").style.display = "block";
+        }
+      };
+    </script>
+
+    {% if request.GET.tab == 'teacher' %}
+    <script>
+      showTeacherSection();
+    </script>
+    {% elif request.GET.tab == 'student' %}
+    <script>
+      showStudentSection();
+    </script>
+    {% else %}
+    <script>
+      showAdminSection();
+    </script>
+    {% endif %} {% endcomment %}

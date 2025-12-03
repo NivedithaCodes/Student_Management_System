@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Class</title>
+    <style>
+      body {
+        font-family: Arial;
+        background: #f5f5f5;
+        padding: 20px;
+      }
+      .container {
+        width: 450px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px #ccc;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 12px;
+      }
+      .btn-save {
+        background: #4caf50;
+        color: white;
+        border: none;
+      }
+      .btn-cancel {
+        background: #f44336;
+        color: white;
+        border: none;
+        text-align: center;
+        display: block;
+        padding: 10px;
+        margin-top: 12px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Edit Class</h2>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <label>Class Name</label>
+        <input
+          type="text"
+          name="class_name"
+          value="{{ cls.class_name }}"
+          required
+        />
+
+        <label>Section</label>
+        <input type="text" name="section" value="{{ cls.section }}" />
+
+        <label>Maximum Strength</label>
+        <input
+          type="number"
+          name="max_strength"
+          value="{{ cls.max_strength }}"
+        />
+
+        <button type="submit" class="btn-save">Save</button>
+
+        <a href="/principal/?tab=class" class="btn-cancel">Cancel</a>
+      </form>
+    </div>
+  </body>
+</html>
+s

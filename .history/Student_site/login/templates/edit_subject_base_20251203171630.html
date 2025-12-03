@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Subject</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 40%;
+        margin: 60px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #444;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #4caf50;
+        border: none;
+        font-size: 16px;
+        color: white;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 15px;
+        text-decoration: none;
+        color: #007bff;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Edit Subject</h2>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Subject Name -->
+        <label>Subject Name</label>
+        <input
+          type="text"
+          name="subject_name"
+          value="{{ subj.subject_name }}"
+          required
+        />
+
+        <!-- Subject Code -->
+        <label>Subject Code</label>
+        <input
+          type="text"
+          name="subject_code"
+          value="{{ subject.subject_code }}"
+          required
+        />
+
+        <button type="submit">Save Changes</button>
+      </form>
+
+      <a class="back-link" href="/principal/?tab=subject"
+        >Back to Subject List</a
+      >
+    </div>
+  </body>
+</html>
