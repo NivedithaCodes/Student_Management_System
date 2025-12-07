@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+</head>
+
+<body>
+
+    {% include "PrincipalPages/sidebar.html" %}
+    {% include "base/navbar.html" %}
+
+    <div class="main-content" id="mainContent">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

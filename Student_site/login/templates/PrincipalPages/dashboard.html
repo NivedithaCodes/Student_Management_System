@@ -1,0 +1,59 @@
+<div class="content-page active" id="dashboardPage">
+  <h2>Dashboard</h2>
+  <div class="dashboard-grid">
+    <div class="card">
+      <i class="fa-solid fa-user-graduate"></i>
+      <h3>My Profile</h3>
+      <p>View or edit your profile details.</p>
+      <a onclick="showPage('studentPage')">Open</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-book"></i>
+      <h3>Courses</h3>
+      <p>Check courses you are enrolled in.</p>
+      <a onclick="showPage('subjectPage')">Open</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-clipboard-check"></i>
+      <h3>Attendance</h3>
+      <p>View your attendance record.</p>
+      <a onclick="showPage('attendancePage')">Open</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-chart-line"></i>
+      <h3>Exams</h3>
+      <p>Check marks & results.</p>
+      <a onclick="showPage('examsPage')">Open</a>
+    </div>
+
+    <!-- Total Students -->
+    <div class="card">
+      <div class="dashboard-box-icon">
+        <i class="fa fa-users"></i>
+      </div>
+      <h3>Total Students</h3>
+      <p id="card-para">{{ total_students }}</p>
+      <a onclick="showPage('studentPage')">Open</a>
+    </div>
+
+    <!-- Total Teachers -->
+    <div class="card">
+      <div class="dashboard-box-icon">
+        <i class="fa fa-chalkboard-teacher"></i>
+      </div>
+      <h3>Total Teachers</h3>
+      <p id="card-para">{{ total_teachers }}</p>
+      <a onclick="showPage('teacherPage')">Open</a>
+    </div>
+
+    <!-- Total Subjects -->
+    <div class="card">
+      <div class="dashboard-box-icon">
+        <i class="fa fa-book"></i>
+      </div>
+      <h3>Total Subjects</h3>
+      <p id="card-para">{{ total_subjects }}</p>
+      <a onclick="showPage('subjectPage')">Open</a>
+    </div>
+  </div>
+</div>

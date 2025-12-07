@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      <style > body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Sidebar */
+      .side-panel {
+        width: 250px;
+        background: #4e73df;
+        color: #d1d5db;
+        flex-shrink: 0;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+        position: fixed;
+        height: 100%;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .side-panel.open {
+        transform: translateX(0);
+      }
+
+      .side-panel h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .side-panel a,
+      .menu-item {
+        display: block;
+        padding: 10px 15px;
+        color: #d1d5db;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 6px;
+        margin-bottom: 5px;
+      }
+
+      .side-panel a:hover,
+      .menu-item:hover {
+        background: #374151;
+      }
+
+      .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .arrow {
+        transition: 0.3s;
+      }
+
+      .menu-item.active .arrow {
+        transform: rotate(-90deg);
+      }
+
+      .subMenu {
+        display: none;
+        flex-direction: column;
+        padding-left: 15px;
+      }
+
+      .subMenu a {
+        padding: 8px 20px;
+        font-size: 0.95em;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: #4e73df;
+        color: white;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #side_btn {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .logout {
+        background: white;
+        color: #4e73df;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      /* Main content */
+      .main-content {
+        margin-left: 0;
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        transition: margin-left 0.3s ease;
+      }
+
+      .main-content.shifted {
+        margin-left: 280px;
+      }
+
+      .content-page {
+        display: none;
+      }
+
+      .content-page.active {
+        display: block;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: 0.3s;
+      }
+
+      .card:hover {
+        transform: scale(1.03);
+      }
+
+      .card i {
+        font-size: 40px;
+        color: #4e73df;
+        margin-bottom: 10px;
+      }
+
+      .card h3 {
+        margin: 10px 0;
+        color: #333;
+      }
+
+      .card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+
+      .card a {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #4e73df;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background: #4e73df;
+        color: white;
+      }
+      form input,
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0 15px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      form button {
+        padding: 10px 20px;
+        margin-top: 7px;
+        margin-bottom: 13px;
+        background: #4e73df;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .dashboard-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .dashboard-box-icon {
+        font-size: 30px;
+        color: #4f46e5; /* Example color */
+      }
+
+      .dashboard-box-content h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      #card-para {
+        margin: 10px 0 0;
+        margin-top: -5px;
+        margin-bottom: 5px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #4e73df;
+      }
+    </style>
+  </head>
+  <body>
+    {% include "sidebar.html" %}
+
+    <div class="main-content" id="mainContent">
+      {% include "navbar.html" %} {% include "dashboard.html" %} {% include
+      "admin_panel.html" %} {% include "teacher_panel.html" %} {% include
+      "student_panel.html" %} {% include "class_page.html" %} {% include
+      "subject_page.html" %} {% include "assign_subject.html" %} {% include
+      "syllabus_page.html" %} {% include "timetable_page.html" %} {% include
+      "fees_page.html" %} {% include "exams_page.html" %} {% include
+      "attendance_page.html" %} {% include "settings_page.html" %}
+    </div>
+
+    <script>
+      // COPY YOUR JS FROM principal.html
+      const sideBtn = document.getElementById("side_btn");
+      const sidePanel = document.getElementById("sidePanel");
+      const mainContent = document.getElementById("mainContent");
+
+      sideBtn.onclick = function () {
+        sidePanel.classList.toggle("open");
+        mainContent.classList.toggle("shifted");
+      };
+
+      function toggleMenu(id, element) {
+        const subMenu = document.getElementById(id);
+        if (subMenu.style.display === "block") {
+          subMenu.style.display = "none";
+          element.classList.remove("active");
+        } else {
+          subMenu.style.display = "block";
+          element.classList.add("active");
+        }
+      }
+
+      function showPage(pageId) {
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.style.display = "none";
+        });
+        document.getElementById(pageId).style.display = "block";
+        sidePanel.classList.remove("open");
+        mainContent.classList.remove("shifted");
+      }
+
+      window.onload = function () {
+        const tab = "{{ tab }}";
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.style.display = "none";
+        });
+        if (tab) {
+          showPage(tab + "Page");
+        } else {
+          showPage("dashboardPage");
+        }
+      };
+    </script>
+  </body>
+</html>

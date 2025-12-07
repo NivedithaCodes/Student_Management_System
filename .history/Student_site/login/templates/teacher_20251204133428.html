@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Teacher Dashboard</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 0;
+        background: #f3f4f6;
+      }
+
+      .sidebar {
+        width: 220px;
+        background: #2c3e50;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 20px;
+      }
+
+      .sidebar a {
+        display: block;
+        padding: 12px;
+        text-decoration: none;
+        color: #fff;
+        margin-bottom: 5px;
+      }
+
+      .sidebar a:hover {
+        background: #1abc9c;
+      }
+
+      .content {
+        margin-left: 240px;
+        padding: 20px;
+      }
+
+      h2 {
+        margin-top: 0px;
+        background: #1abc9c;
+        color: white;
+        padding: 10px;
+        border-radius: 6px;
+        width: max-content;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #aaa;
+        padding: 10px;
+        text-align: left;
+      }
+
+      button {
+        padding: 8px 16px;
+        background: #1abc9c;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 10px;
+      }
+
+      textarea,
+      select,
+      input {
+        padding: 8px;
+        width: 100%;
+        margin-top: 5px;
+      }
+
+      .section {
+        display: none;
+        margin-top: 20px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      .active-section {
+        display: block;
+      }
+    </style>
+
+    <script>
+      function openTab(tabName) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active-section"));
+        document.getElementById(tabName).classList.add("active-section");
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <
+      <a href="#" onclick="openTab('courses')">Assigned Courses</a>
+      <a href="#" onclick="openTab('students')">View Students</a>
+      <a href="#" onclick="openTab('attendance')">Mark Attendance</a>
+      <a href="#" onclick="openTab('marks')">Add Marks</a>
+      <a href="#" onclick="openTab('timetables')">View Timetables</a>
+      <a href="#" onclick="openTab('notifications')">Send Notification</a>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Assigned Courses -->
+      <div class="section active-section" id="courses">
+        <h2>Assigned Courses</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Class</th>
+          </tr>
+
+          {% for sub in assigned_subjects %}
+          <tr>
+            <td>{{ sub.id }}</td>
+            <td>{{ sub.subject.subject_name }}</td>
+            <td>
+              {{ sub.assigned_class.class_name }} {{ sub.assigned_class.section
+              }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No courses assigned.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- View Students -->
+      <div class="section" id="students">
+        <h2>Student List</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Roll No</th>
+          </tr>
+
+          {% for std in students %}
+          <tr>
+            <td>{{ std.id }}</td>
+            <td>{{ std.name }}</td>
+            <td>{{ std.roll_no }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No students found.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Mark Attendance -->
+      <div class="section" id="attendance">
+        <h2>Mark Attendance</h2>
+        <form method="POST" action="{% url 'mark_attendance' %}">
+          {% csrf_token %}
+
+          <label>Select Subject</label>
+          <select name="assign_id" required>
+            <option disabled selected>Select</option>
+            {% for a in assigned_subjects %}
+            <option value="{{ a.id }}">
+              {{ a.subject.subject_name }} - {{ a.assigned_class.class_name }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <label>Student</label>
+          <select name="student_id" required>
+            {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Status</label>
+          <select name="status">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <!-- Add Marks -->
+      <div class="section" id="marks">
+        <h2>Add Marks</h2>
+        <form method="POST" action="{% url 'add_marks' %}">
+          {% csrf_token %}
+
+          <label>Select Subject</label>
+          <select name="assign_id" required>
+            {% for a in assigned_subjects %}
+            <option value="{{ a.id }}">{{ a.subject.subject_name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Student</label>
+          <select name="student_id">
+            {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Marks</label>
+          <input type="number" name="marks" required />
+
+          <button type="submit">Save</button>
+        </form>
+      </div>
+
+      <!-- Timetables -->
+      <div class="section" id="timetables">
+        <h2>Class Timetables</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Class</th>
+            <th>File</th>
+          </tr>
+
+          {% for t in timetables %}
+          <tr>
+            <td>{{ t.id }}</td>
+            <td>{{ t.class_room.class_name }} {{ t.class_room.section }}</td>
+            <td>
+              {% if t.timetable_file %}
+              <a href="{{ t.timetable_file.url }}" target="_blank">View</a>
+              {% else %} - {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No timetables available.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Notifications -->
+      <div class="section" id="notifications">
+        <h2>Send Notification to Admin</h2>
+
+        <form method="POST" action="{% url 'send_notification' %}">
+          {% csrf_token %}
+          <label>Message</label>
+          <textarea name="message" rows="3" required></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

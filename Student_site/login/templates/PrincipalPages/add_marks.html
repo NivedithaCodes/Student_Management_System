@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Marks</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 30px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      button {
+        padding: 10px 20px;
+        background: #2196f3;
+        color: white;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Add Marks: {{ exam_name }}</h2>
+
+    <form method="POST" action="{% url 'submit_marks' %}">
+      {% csrf_token %}
+
+      <input type="hidden" name="subject_id" value="{{ subject_id }}" />
+      <input type="hidden" name="exam_name" value="{{ exam_name }}" />
+
+      <table>
+        <tr>
+          <th>Student</th>
+          <th>Marks</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+          <td>{{ s.name }}</td>
+          <td>
+            <input
+              type="number"
+              name="student_{{ s.id }}"
+              min="0"
+              max="100"
+              required
+            />
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <br />
+      <button type="submit">Submit Marks</button>
+    </form>
+  </body>
+</html>

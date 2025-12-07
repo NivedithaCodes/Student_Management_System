@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        width: 95%;
+        margin: 20px auto;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .section {
+        background: white;
+        padding: 20px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .section h3 {
+        margin-bottom: 15px;
+        color: #444;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+        border: 1px solid #ccc;
+        text-align: left;
+      }
+
+      th {
+        background: #4caf50;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      a.button {
+        display: inline-block;
+        margin: 5px 0;
+        padding: 8px 15px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      a.button:hover {
+        background: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Welcome, {{ user.name }}</h2>
+
+      <!-- Assigned Courses -->
+      <div class="section" id="assigned_courses">
+        <h3>Assigned Courses</h3>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Class</th>
+            <th>Actions</th>
+          </tr>
+          {% for sub in subjects %} {% if sub.teacher.id == user.id %}
+          <tr>
+            <td>{{ sub.id }}</td>
+            <td>{{ sub.subject.subject_name }}</td>
+            <td>
+              {{ sub.assigned_class.class_name }} {{ sub.assigned_class.section
+              }}
+            </td>
+            <td>
+              <a
+                class="button"
+                href="{% url 'view_students' sub.assigned_class.id %}"
+                >View Students</a
+              >
+              <a
+                class="button"
+                href="{% url 'mark_attendance' sub.assigned_class.id sub.subject.id %}"
+                >Mark Attendance</a
+              >
+              <a
+                class="button"
+                href="{% url 'add_marks' sub.assigned_class.id sub.subject.id %}"
+                >Add Marks</a
+              >
+            </td>
+          </tr>
+          {% endif %} {% empty %}
+          <tr>
+            <td colspan="4">No assigned courses yet</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Timetable -->
+      <div class="section" id="timetable">
+        <h3>Class Timetable</h3>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Class</th>
+            <th>Timetable File</th>
+          </tr>
+          {% for tt in timetables %} {% if tt.class_room.class_teacher.id ==
+          user.id %}
+          <tr>
+            <td>{{ tt.id }}</td>
+            <td>{{ tt.class_room.class_name }} {{ tt.class_room.section }}</td>
+            <td>
+              {% if tt.timetable_file %}
+              <a href="{{ tt.timetable_file.url }}" target="_blank"
+                >View File</a
+              >
+              {% else %} - {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No timetables available</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Notifications -->
+      <div class="section" id="notifications">
+        <h3>Send Notification to Admin</h3>
+        <form method="POST" action="{% url 'send_notification' %}">
+          {% csrf_token %}
+          <label>Message:</label>
+          <textarea
+            name="message"
+            rows="3"
+            style="width: 100%; padding: 8px; margin-top: 5px"
+            required
+          ></textarea>
+          <button type="submit" class="button">Send</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

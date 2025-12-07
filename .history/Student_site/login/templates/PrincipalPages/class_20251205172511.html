@@ -1,0 +1,53 @@
+<!-- Academics -->
+
+<div id="classPage" class="content-page">
+  <h2>Add Class</h2>
+  <form method="POST" action="{% url 'add_class' %}">
+    {% csrf_token %}
+    <label>Class Name:</label><br />
+    <input type="text" name="class_name" required /><br />
+
+    <label>Section:</label><br />
+    <input type="text" name="section" /><br />
+
+    <label>Maximum Strength:</label><br />
+    <input type="number" name="max_strength" /><br />
+
+    <label>Class Teacher:</label><br />
+    <select name="class_teacher">
+      <option value="">--Select Teacher--</option>
+      {% for t in users_teacher%}
+      <option value="{{ t.id }}">{{ t.name }}</option>
+      {% endfor %}
+    </select>
+    <br />
+
+    <button type="submit">Add Class</button>
+  </form>
+
+  <h2>Existing Classes</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Section</th>
+      <th>Max Strength</th>
+      <th>Teacher</th>
+      <th>Actions</th>
+    </tr>
+    {% for cls in classes %}
+    <tr>
+      <td>{{ cls.class_name }}</td>
+      <td>{{ cls.section }}</td>
+      <td>{{ cls.max_strength }}</td>
+      <td>
+        {% if cls.class_teacher %} {{ cls.class_teacher.name }} {% else %}
+        -endif %}
+      </td>
+      <td>
+        <a href="{% url 'edit_class' cls.id %}">Edit</a> |
+        <a href="{% url 'delete_class' cls.id %}">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>

@@ -1,0 +1,43 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+{% if tab == "dashboard" %}
+    {% include "PrincipalPages/dashboard.html" %}
+
+{% elif tab == "admin" %}
+    {% include "PrincipalPages/admin.html" %}
+
+{% elif tab == "teacher" %}
+    {% include "PrincipalPages/teacher.html" %}
+
+{% elif tab == "student" %}
+    {% include "PrincipalPages/student.html" %}
+
+{% elif tab == "class" %}
+    {% include "PrincipalPages/class.html" %}
+
+{% elif tab == "subject" %}
+    {% include "PrincipalPages/subject.html" %}
+
+{% elif tab == "assign_subject" %}
+    {% include "PrincipalPages/assign.html" %}
+
+{% elif tab == "syllabus" %}
+    {% include "PrincipalPages/syllabus.html" %}
+
+{% elif tab == "timetable" %}
+    {% include "PrincipalPages/timetable.html" %}
+
+{% elif tab == "fees" %}
+    {% include "PrincipalPages/fees.html" %}
+
+{% elif tab == "attendance" %}
+    {% include "PrincipalPages/attendance.html" %}
+
+{% elif tab == "settings" %}
+    {% include "PrincipalPages/settings.html" %}
+{% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    {% include "sidebar.html" %}
+
+    <div class="main-content" id="mainContent">
+      {% include "navbar.html" %} {% include "dashboard.html" %} {% include
+      "admin_panel.html" %} {% include "teacher_panel.html" %} {% include
+      "student_panel.html" %} {% include "class_page.html" %} {% include
+      "subject_page.html" %} {% include "assign_subject.html" %} {% include
+      "syllabus_page.html" %} {% include "timetable_page.html" %} {% include
+      "fees_page.html" %} {% include "exams_page.html" %} {% include
+      "attendance_page.html" %} {% include "settings_page.html" %}
+    </div>
+
+    <script>
+      // COPY YOUR JS FROM principal.html
+      const sideBtn = document.getElementById("side_btn");
+      const sidePanel = document.getElementById("sidePanel");
+      const mainContent = document.getElementById("mainContent");
+
+      sideBtn.onclick = function () {
+        sidePanel.classList.toggle("open");
+        mainContent.classList.toggle("shifted");
+      };
+
+      function toggleMenu(id, element) {
+        const subMenu = document.getElementById(id);
+        if (subMenu.style.display === "block") {
+          subMenu.style.display = "none";
+          element.classList.remove("active");
+        } else {
+          subMenu.style.display = "block";
+          element.classList.add("active");
+        }
+      }
+
+      function showPage(pageId) {
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.style.display = "none";
+        });
+        document.getElementById(pageId).style.display = "block";
+        sidePanel.classList.remove("open");
+        mainContent.classList.remove("shifted");
+      }
+
+      window.onload = function () {
+        const tab = "{{ tab }}";
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.style.display = "none";
+        });
+        if (tab) {
+          showPage(tab + "Page");
+        } else {
+          showPage("dashboardPage");
+        }
+      };
+    </script>
+  </body>
+</html>

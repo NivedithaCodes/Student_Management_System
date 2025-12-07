@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Teacher Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Sidebar */
+      .side-panel {
+        width: 250px;
+        background: #4e73df;
+        color: #d1d5db;
+        flex-shrink: 0;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+        position: fixed;
+        height: 100%;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .side-panel.open {
+        transform: translateX(0);
+      }
+
+      .side-panel h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .side-panel a,
+      .menu-item {
+        display: block;
+        padding: 10px 15px;
+        color: #d1d5db;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 6px;
+        margin-bottom: 5px;
+      }
+
+      .side-panel a:hover,
+      .menu-item:hover {
+        background: #374151;
+      }
+
+      .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .arrow {
+        transition: 0.3s;
+      }
+      .menu-item.active .arrow {
+        transform: rotate(-90deg);
+      }
+
+      .subMenu {
+        display: none;
+        flex-direction: column;
+        padding-left: 15px;
+      }
+      .subMenu a {
+        padding: 8px 20px;
+        font-size: 0.95em;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: #4e73df;
+        color: white;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #side_btn {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .logout {
+        background: white;
+        color: #4e73df;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      /* Main content */
+      .main-content {
+        margin-left: 0;
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        transition: margin-left 0.3s ease;
+      }
+
+      .main-content.shifted {
+        margin-left: 280px;
+      }
+
+      .content-page {
+        display: none;
+      }
+      .content-page.active {
+        display: block;
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin-top: 10px;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background: #4e73df;
+        color: white;
+      }
+
+      /* Forms */
+      form input,
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0 15px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+      form button {
+        padding: 10px 20px;
+        margin-top: 7px;
+        margin-bottom: 13px;
+        background: #4e73df;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="side-panel" id="sidePanel">
+      <h2>Teacher</h2>
+      <a onclick="showPage('coursesPage')">Assigned Courses</a>
+      <a onclick="showPage('studentsPage')">View Students</a>
+      <a onclick="showPage('attendancePage')">Mark Attendance</a>
+      <a onclick="showPage('marksPage')">Add Marks</a>
+      <a onclick="showPage('timetablePage')">View Timetables</a>
+      <a onclick="showPage('notificationsPage')">Send Notification</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+      <div class="navbar">
+        <button id="side_btn"><i class="fa-solid fa-bars"></i></button>
+        Teacher Dashboard
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+      </div>
+
+      <!-- Assigned Courses -->
+      <div class="content-page" id="coursesPage">
+        <h2>Assigned Courses</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Class</th>
+          </tr>
+          {% for sub in assigned_subjects %}
+          <tr>
+            <td>{{ sub.id }}</td>
+            <td>{{ sub.subject.subject_name }}</td>
+            <td>
+              {{ sub.assigned_class.class_name }} {{ sub.assigned_class.section
+              }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No courses assigned.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- View Students -->
+      <div class="content-page" id="studentsPage">
+        <h2>Student List</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Roll No</th>
+          </tr>
+          {% for std in students %}
+          <tr>
+            <td>{{ std.id }}</td>
+            <td>{{ std.name }}</td>
+            <td>{{ std.roll_no }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No students found.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Mark Attendance -->
+      <div class="content-page" id="attendancePage">
+        <h2>Mark Attendance</h2>
+        <form method="POST" action="{% url 'mark_attendance' %}">
+          {% csrf_token %}
+          <label>Select Subject</label>
+          <select name="assign_id" required>
+            <option disabled selected>Select</option>
+            {% for a in assigned_subjects %}
+            <option value="{{ a.id }}">
+              {{ a.subject.subject_name }} - {{ a.assigned_class.class_name }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <label>Student</label>
+          <select name="student_id" required>
+            {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Status</label>
+          <select name="status">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <!-- Add Marks -->
+      <div class="content-page" id="marksPage">
+        <h2>Add Marks</h2>
+        <form method="POST" action="{% url 'add_marks' %}">
+          {% csrf_token %}
+          <label>Select Subject</label>
+          <select name="assign_id" required>
+            {% for a in assigned_subjects %}
+            <option value="{{ a.id }}">{{ a.subject.subject_name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Student</label>
+          <select name="student_id">
+            {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Marks</label>
+          <input type="number" name="marks" required />
+          <button type="submit">Save</button>
+        </form>
+      </div>
+
+      <!-- View Timetables -->
+      <div class="content-page" id="timetablePage">
+        <h2>Class Timetables</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Class</th>
+            <th>File</th>
+          </tr>
+          {% for t in timetables %}
+          <tr>
+            <td>{{ t.id }}</td>
+            <td>{{ t.class_room.class_name }} {{ t.class_room.section }}</td>
+            <td>
+              {% if t.timetable_file %}
+              <a href="{{ t.timetable_file.url }}" target="_blank">View</a>
+              {% else %} - {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No timetables available.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Send Notifications -->
+      <div class="content-page" id="notificationsPage">
+        <h2>Send Notification to Admin</h2>
+        <form method="POST" action="{% url 'send_notification' %}">
+          {% csrf_token %}
+          <label>Message</label>
+          <textarea name="message" rows="3" required></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const sideBtn = document.getElementById("side_btn");
+      const sidePanel = document.getElementById("sidePanel");
+      const mainContent = document.getElementById("mainContent");
+
+      sideBtn.onclick = function () {
+        sidePanel.classList.toggle("open");
+        mainContent.classList.toggle("shifted");
+      };
+
+      function showPage(pageId) {
+        document
+          .querySelectorAll(".content-page")
+          .forEach((page) => (page.style.display = "none"));
+        document.getElementById(pageId).style.display = "block";
+        sidePanel.classList.remove("open");
+        mainContent.classList.remove("shifted");
+      }
+
+      window.onload = function () {
+        showPage("coursesPage");
+      };
+    </script>
+  </body>
+</html>

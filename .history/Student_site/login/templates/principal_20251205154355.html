@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Sidebar */
+      .side-panel {
+        width: 250px;
+        background: #4e73df;
+        color: #d1d5db;
+        flex-shrink: 0;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+        position: fixed;
+        height: 100%;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .side-panel.open {
+        transform: translateX(0);
+      }
+
+      .side-panel h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .side-panel a,
+      .menu-item {
+        display: block;
+        padding: 10px 15px;
+        color: #d1d5db;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 6px;
+        margin-bottom: 5px;
+      }
+
+      .side-panel a:hover,
+      .menu-item:hover {
+        background: #374151;
+      }
+
+      .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .arrow {
+        transition: 0.3s;
+      }
+
+      .menu-item.active .arrow {
+        transform: rotate(-90deg);
+      }
+
+      .subMenu {
+        display: none;
+        flex-direction: column;
+        padding-left: 15px;
+      }
+
+      .subMenu a {
+        padding: 8px 20px;
+        font-size: 0.95em;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: #4e73df;
+        color: white;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #side_btn {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .logout {
+        background: white;
+        color: #4e73df;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      /* Main content */
+      .main-content {
+        margin-left: 0;
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        transition: margin-left 0.3s ease;
+      }
+
+      .main-content.shifted {
+        margin-left: 280px;
+      }
+
+      .content-page {
+        display: none;
+      }
+
+      .content-page.active {
+        display: block;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: 0.3s;
+      }
+
+      .card:hover {
+        transform: scale(1.03);
+      }
+
+      .card i {
+        font-size: 40px;
+        color: #4e73df;
+        margin-bottom: 10px;
+      }
+
+      .card h3 {
+        margin: 10px 0;
+        color: #333;
+      }
+
+      .card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+
+      .card a {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #4e73df;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background: #4e73df;
+        color: white;
+      }
+      form input,
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0 15px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      form button {
+        padding: 10px 20px;
+        margin-top: 7px;
+        margin-bottom: 13px;
+        background: #4e73df;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .dashboard-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .dashboard-box-icon {
+        font-size: 30px;
+        color: #4f46e5; /* Example color */
+      }
+
+      .dashboard-box-content h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      #card-para {
+        margin: 10px 0 0;
+        margin-top: -5px;
+        margin-bottom: 5px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #4e73df;
+      }
+    </style>
+  </head>
+  <body>
+    {% block content %} {% endblock %}
+
+    <!-- Sidebar -->
+    <div class="side-panel" id="sidePanel">
+      <h2>Admin</h2>
+      <a
+        href="{% url 'profile' %}"
+        class="{% if request.path == '/profile/' %}active{% endif %}"
+        style="display: flex; align-items: center; gap: 10px; padding: 10px"
+      >
+        <i class="fa fa-user"></i> Profile
+      </a>
+      <hr />
+      <a href="/principal/?tab=dashboard">Dashboard</a>
+      <a href="/principal/?tab=admin">Admin</a>
+      <a href="/principal/?tab=teacher">Teacher</a>
+      <a href="/principal/?tab=student">Student</a>
+
+      <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+        <span>Academics</span>
+        <span class="arrow">&lt;</span>
+      </div>
+      <div id="academicsMenu" class="subMenu">
+        <a href="/principal/?tab=class">Class</a>
+        <a href="/principal/?tab=subject">Subject</a>
+        <a href="/principal/?tab=assign">Assign Subject</a>
+        <a href="/principal/?tab=syllabus">Syllabus</a>
+        <a href="/principal/?tab=timetable">Timetable</a>
+      </div>
+
+      <a href="/principal/?tab=fees">Fees Collection</a>
+      <a href="/principal/?tab=exams">Examinations</a>
+      <a href="/principal/?tab=attendance">Attendance</a>
+      <a href="/principal/?tab=settings">Settings</a>
+    </div>
+
+    <!-- Main content wrapper -->
+    <div class="main-content" id="mainContent">
+      <div class="navbar">
+        <button id="side_btn"><i class="fa-solid fa-bars"></i></button>
+        Student Management System
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+      </div>
+
+      <!-- Dashboard -->
+      <div class="content-page active" id="dashboardPage">
+        <h2>Dashboard</h2>
+        {% comment %}
+        <p>Welcome to your student management dashboard.</p>
+        {% endcomment %}
+        <div class="dashboard-grid">
+          <div class="card">
+            <i class="fa-solid fa-user-graduate"></i>
+            <h3>My Profile</h3>
+            <p>View or edit your profile details.</p>
+            <a onclick="showPage('studentPage')">Open</a>
+          </div>
+          <div class="card">
+            <i class="fa-solid fa-book"></i>
+            <h3>Courses</h3>
+            <p>Check courses you are enrolled in.</p>
+            <a onclick="showPage('subjectPage')">Open</a>
+          </div>
+          <div class="card">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <h3>Attendance</h3>
+            <p>View your attendance record.</p>
+            <a onclick="showPage('attendancePage')">Open</a>
+          </div>
+          <div class="card">
+            <i class="fa-solid fa-chart-line"></i>
+            <h3>Exams</h3>
+            <p>Check marks & results.</p>
+            <a onclick="showPage('examsPage')">Open</a>
+          </div>
+
+          <!-- Total Students -->
+          <div class="card">
+            <div class="dashboard-box-icon">
+              <i class="fa fa-users"></i>
+            </div>
+            <h3>Total Students</h3>
+            <p id="card-para">{{ total_students }}</p>
+            <a onclick="showPage('studentPage')">Open</a>
+          </div>
+
+          <!-- Total Teachers -->
+          <div class="card">
+            <div class="dashboard-box-icon">
+              <i class="fa fa-chalkboard-teacher"></i>
+            </div>
+            <h3>Total Teachers</h3>
+            <p id="card-para">{{ total_teachers }}</p>
+            <a onclick="showPage('teacherPage')">Open</a>
+          </div>
+
+          <!-- Total Subjects -->
+          <div class="card">
+            <div class="dashboard-box-icon">
+              <i class="fa fa-book"></i>
+            </div>
+            <h3>Total Subjects</h3>
+            <p id="card-para">{{ total_subjects }}</p>
+            <a onclick="showPage('subjectPage')">Open</a>
+          </div>
+        </div>
+      </div>
+
+      {% comment %} {% block content %} {% endblock %} {% endcomment %}
+
+      <!-- Admin -->
+
+      <div class="content-page" id="adminPage">
+        <h2>Admin Panel</h2>
+        <form method="POST" action="/add-admin/">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Admin Name" />
+          <input type="email" name="email" placeholder="Email" />
+          <input type="password" name="password" placeholder="Password" />
+          <button type="submit">Add Admin</button>
+        </form>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users_admin %}
+            <tr>
+              <td>{{ u.id }}</td>
+              <td>{{ u.name }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                <a href="{% url 'edit_user' u.id %}" class="btn-edit">Edit</a>
+                <a href="{% url 'delete_user' u.id %}" class="btn-delete"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Teacher -->
+
+      <div class="content-page" id="teacherPage">
+        <h2>Teacher Management</h2>
+        <form method="POST" action="/add-teacher/">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Teacher Name" required />
+          <input
+            type="email"
+            name="email"
+            placeholder="Teacher Email"
+            required
+          />
+          <input type="text" name="subject" placeholder="Subject" required />
+          <button type="submit">Add Teacher</button>
+        </form>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Subject</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in users_teacher %}
+            <tr>
+              <td>{{ t.id }}</td>
+              <td>{{ t.name }}</td>
+              <td>{{ t.email }}</td>
+              <td>{{ t.subject }}</td>
+              <td>
+                <a href="{% url 'edit_user' t.id %}" class="btn-edit">Edit</a>
+                <a href="{% url 'delete_user' t.id %}" class="btn-delete"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Student -->
+
+      <div class="content-page" id="studentPage">
+        <h2>Student Management</h2>
+        <form method="POST" action="/add-student/">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Student Name" required />
+          <input
+            type="email"
+            name="email"
+            placeholder="Student Email"
+            required
+          />
+
+          <select name="class_name" required>
+            {% for cls in classes %}
+            <option value="{{ cls.id }}">
+              {{ cls.class_name }} {{ cls.section }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <button type="submit">Add Student</button>
+        </form>
+
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Class</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in users_student %}
+            <tr>
+              <td>{{ s.id }}</td>
+              <td>{{ s.name }}</td>
+              <td>{{ s.email }}</td>
+              <td>{{ s.class_name.class_name }} {{ s.class_name.section }}</td>
+              <td>
+                <a href="{% url 'edit_user' s.id %}" class="btn-edit">Edit</a>
+                <a href="{% url 'delete_user' s.id %}" class="btn-delete"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Academics -->
+
+      <div id="classPage" class="content-page">
+        <h2>Add Class</h2>
+        <form method="POST" action="{% url 'add_class' %}">
+          {% csrf_token %}
+          <label>Class Name:</label><br />
+          <input type="text" name="class_name" required /><br />
+
+          <label>Section:</label><br />
+          <input type="text" name="section" /><br />
+
+          <label>Maximum Strength:</label><br />
+          <input type="number" name="max_strength" /><br />
+
+          <label>Class Teacher:</label><br />
+          <select name="class_teacher">
+            <option value="">--Select Teacher--</option>
+            {% for t in users_teacher%}
+            <option value="{{ t.id }}">{{ t.name }}</option>
+            {% endfor %}
+          </select>
+          <br />
+
+          <button type="submit">Add Class</button>
+        </form>
+
+        <h2>Existing Classes</h2>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Section</th>
+            <th>Max Strength</th>
+            <th>Teacher</th>
+            <th>Actions</th>
+          </tr>
+          {% for cls in classes %}
+          <tr>
+            <td>{{ cls.class_name }}</td>
+            <td>{{ cls.section }}</td>
+            <td>{{ cls.max_strength }}</td>
+            <td>
+              {% if cls.class_teacher %} {{ cls.class_teacher.name }} {% else %}
+              - {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'edit_class' cls.id %}">Edit</a> |
+              <a href="{% url 'delete_class' cls.id %}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- SUBJECT PAGE -->
+
+      <div class="content-page" id="subjectPage">
+        <h2>Subjects</h2>
+
+        <!-- Add Subject Form -->
+        <form method="POST" action="{% url 'add_only_subject' %}">
+          {% csrf_token %}
+
+          <input
+            type="text"
+            name="subject_name"
+            placeholder="Subject Name"
+            required
+          />
+
+          <input
+            type="text"
+            name="subject_code"
+            placeholder="Subject Code"
+            required
+          />
+
+          <button type="submit">Add Subject</button>
+        </form>
+
+        <!-- Subject Table -->
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Subject Name</th>
+            <th>Subject Code</th>
+            <th>Actions</th>
+          </tr>
+
+          {% for s in subjects_list %}
+          <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.subject_name }}</td>
+            <td>{{ s.subject_code }}</td>
+
+            <td>
+              <a href="{% url 'edit_subject_base' s.id %}">Edit</a>
+              <a href="{% url 'delete_subject_base' s.id %}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      <!--Assign Subject-->
+
+      <div class="content-page" id="assignPage">
+        <h2>Assign Subject</h2>
+        <form method="POST" action="{% url 'add_subject' %}">
+          {% csrf_token %}
+
+          <select name="subject" required>
+            <option value="" disabled selected>Select Subject</option>
+            {% for s in subjects_list %}
+            <option value="{{ s.id }}">
+              {{ s.subject_name }} ({{ s.subject_code }})
+            </option>
+            {% endfor %}
+          </select>
+
+          <select name="assigned_class" required>
+            <option value="" disabled selected>Select Class</option>
+            {% for cls in classes %}
+            <option value="{{ cls.id }}">
+              {{ cls.class_name }} {{ cls.section }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <select name="teacher">
+            <option value="" disabled selected>Select Teacher</option>
+            {% for t in users_teacher %}
+            <option value="{{ t.id }}">{{ t.name }}</option>
+            {% endfor %}
+          </select>
+
+          <button type="submit">Add Subject</button>
+        </form>
+
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Class</th>
+            <th>Teacher</th>
+            <th>Actions</th>
+          </tr>
+          {% for sub in subjects %}
+          <tr>
+            <td>{{ sub.id }}</td>
+            <td>{{ sub.subject.subject_name }}</td>
+            <td>
+              {{ sub.assigned_class.class_name }} {{sub.assigned_class.section}}
+            </td>
+            <td>
+              {% if sub.teacher %}{{ sub.teacher.name }}{% else %}-{% endif %}
+            </td>
+            <td>
+              <a href="{% url 'edit_subject' sub.id %}">Edit</a>
+              <a href="{% url 'delete_subject' sub.id %}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <div class="content-page" id="syllabusPage">
+        <h2>Syllabus Management</h2>
+        <form
+          method="POST"
+          action="{% url 'add_syllabus' %}"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <select name="class_room" required>
+            <option value="" disabled selected>Select Class</option>
+            {% for cls in classes %}
+            <option value="{{ cls.id }}">
+              {{ cls.class_name }} {{ cls.section }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <select name="subject" required>
+            <option value="" disabled selected>Select Subject</option>
+            {% for sub in subjects_list %}
+            <option value="{{ sub.id }}">{{ sub.subject_name }}</option>
+            {% endfor %}
+          </select>
+
+          <input type="file" name="syllabus_file" required />
+          <button type="submit">Upload Syllabus</button>
+        </form>
+
+        <table>
+          <tr>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>File</th>
+            <th>Actions</th>
+          </tr>
+          {% for syl in syllabi %}
+          <tr>
+            <td>
+              {{ syl.class_room.class_name }} {{ syl.class_room.section }}
+            </td>
+            <td>{{ syl.subject.subject_name }}</td>
+            <td>
+              <a href="{{ syl.syllabus_file.url }}" target="_blank">View</a>
+            </td>
+            <td>
+              <a href="{% url 'edit_syllabus' syl.id %}">Edit</a>
+              <a href="{% url 'delete_syllabus' syl.id %}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <div id="timetablePage" class="content-page">
+        <h2>Timetable Upload</h2>
+
+        <form
+          method="POST"
+          action="{% url 'add_timetable' %}"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+
+          <label>Select Class</label>
+          <select name="class_room" required>
+            <option value="">Select Class</option>
+            {% for c in classes %}
+            <option value="{{ c.id }}">
+              {{ c.class_name }} {{ c.section }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <label>Upload Timetable File</label>
+          <input type="file" name="timetable_file" required />
+
+          <button type="submit">Add Timetable</button>
+        </form>
+
+        <hr />
+
+        <h3>Uploaded Timetables</h3>
+
+        <table>
+          <tr>
+            <th>Class</th>
+            <th>File</th>
+            <th>Actions</th>
+          </tr>
+
+          {% for t in timetables %}
+          <tr>
+            <td>{{ t.class_room.class_name }} {{ t.class_room.section }}</td>
+            <td>
+              <a href="{{ t.timetable_file.url }}" target="_blank">View File</a>
+            </td>
+            <td>
+              <a href="{% url 'edit_timetable' t.id %}?tab=timetable">Edit</a>
+              <a
+                href="{% url 'delete_timetable' t.id %}"
+                onclick="return confirm('Delete this timetable?')"
+                >Delete</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Fees -->
+      <div class="content-page" id="feesPage">
+        <h2>Fees Collection</h2>
+        <table>
+          <tr>
+            <th>Student</th>
+            <th>Class</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>Anjana</td>
+            <td>10A</td>
+            <td>$500</td>
+            <td>Paid</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Exams -->
+      <div class="content-page" id="examsPage">
+        <h2>Examinations</h2>
+        <table>
+          <tr>
+            <th>Exam</th>
+            <th>Class</th>
+            <th>Date</th>
+          </tr>
+          <tr>
+            <td>Midterm</td>
+            <td>10A</td>
+            <td>2025-12-01</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Attendance -->
+      <div class="content-page" id="attendancePage">
+        <h2>Attendance</h2>
+        <table>
+          <tr>
+            <th>Student</th>
+            <th>Class</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>Anjana</td>
+            <td>10A</td>
+            <td>2025-11-25</td>
+            <td>Present</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Settings -->
+      <div class="content-page" id="settingsPage">
+        <h2>Settings</h2>
+        <form>
+          <input
+            type="text"
+            placeholder="System Name"
+            value="Student Management System"
+          />
+          <input
+            type="email"
+            placeholder="Admin Email"
+            value="niveditha@.com"
+          />
+          <button type="submit">Update Settings</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Toggle sidebar
+      const sideBtn = document.getElementById("side_btn");
+      const sidePanel = document.getElementById("sidePanel");
+      const mainContent = document.getElementById("mainContent");
+
+      sideBtn.onclick = function () {
+        sidePanel.classList.toggle("open");
+        mainContent.classList.toggle("shifted");
+      };
+
+      // Toggle submenu
+      function toggleMenu(id, element) {
+        const subMenu = document.getElementById(id);
+        if (subMenu.style.display === "block") {
+          subMenu.style.display = "none";
+          element.classList.remove("active");
+        } else {
+          subMenu.style.display = "block";
+          element.classList.add("active");
+        }
+      }
+
+      function showPage(pageId) {
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.style.display = "none";
+        });
+
+        document.getElementById(pageId).style.display = "block";
+
+        sidePanel.classList.remove("open");
+        mainContent.classList.remove("shifted");
+      }
+
+      window.onload = function () {
+        const tab = "{{ tab }}";
+
+        document.querySelectorAll(".content-page").forEach((page) => {
+          page.style.display = "none";
+        });
+
+        if (tab) {
+          showPage(tab + "Page");
+        } else {
+          showPage("dashboardPage");
+        }
+      };
+    </script>
+  </body>
+</html>

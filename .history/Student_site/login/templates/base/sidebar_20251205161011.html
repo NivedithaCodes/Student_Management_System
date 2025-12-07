@@ -1,0 +1,26 @@
+<div class="side-panel" id="sidePanel">
+  <h2>Admin</h2>
+
+  <a href="{% url 'profile' %}"> <i class="fa fa-user"></i> Profile </a>
+
+  <hr />
+
+  <a href="{% url 'principal_dashboard' %}">Dashboard</a>
+  <a href="{% url 'principal_admin' %}">Admin</a>
+  <a href="{% url 'principal_teachers' %}">Teachers</a>
+  <a href="{% url 'principal_students' %}">Students</a>
+
+  <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+    <span>Academics</span>
+    <span class="arrow">&lt;</span>
+  </div>
+
+  <div id="academicsMenu" class="subMenu">
+    <a href="{% url 'principal_classes' %}">Class</a>
+    <a href="{% url 'principal_subjects' %}">Subject</a>
+    <a href="{% url 'principal_assign_subject' %}">Assign Subject</a>
+    <a href="{% url 'principal_syllabus' %}">Syllabus</a>
+  </div>
+
+  <a href="{% url 'logout' %}" class="logout">Logout</a>
+</div>

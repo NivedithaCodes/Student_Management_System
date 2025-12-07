@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Management System</title>
+</head>
+
+<body>
+
+    {% include "PrincipalPages/sidebar.html" %}
+    {% include "base/navbar.html" %}
+
+    <div class="main-content" id="mainContent">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<div class="content-page" id="syllabusPage">
+  <h2>Syllabus Management</h2>
+  <form
+    method="POST"
+    action="{% url 'add_syllabus' %}"
+    enctype="multipart/form-data"
+  >
+    {% csrf_token %}
+    <select name="class_room" required>
+      <option value="" disabled selected>Select Class</option>
+      {% for cls in classes %}
+      <option value="{{ cls.id }}">
+        {{ cls.class_name }} {{ cls.section }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <select name="subject" required>
+      <option value="" disabled selected>Select Subject</option>
+      {% for sub in subjects_list %}
+      <option value="{{ sub.id }}">{{ sub.subject_name }}</option>
+      {% endfor %}
+    </select>
+
+    <input type="file" name="syllabus_file" required />
+    <button type="submit">Upload Syllabus</button>
+  </form>
+
+  <table>
+    <tr>
+      <th>Class</th>
+      <th>Subject</th>
+      <th>File</th>
+      <th>Actions</th>
+    </tr>
+    {% for syl in syllabi %}
+    <tr>
+      <td>{{ syl.class_room.class_name }} {{ syl.class_room.section }}</td>
+      <td>{{ syl.subject.subject_name }}</td>
+      <td>
+        <a href="{{ syl.syllabus_file.url }}" target="_blank">View</a>
+      </td>
+      <td>
+        <a href="{% url 'edit_syllabus' syl.id %}">Edit</a>
+        <a href="{% url 'delete_syllabus' syl.id %}">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>

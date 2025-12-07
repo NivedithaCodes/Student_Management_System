@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Student Management{% endblock %}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+
+  <body>
+    {% include 'base/sidebar.html' %} {% include 'base/topbar.html' %}
+
+    <main class="main-content" id="mainContent">
+      {% block content %} {% endblock %}
+    </main>
+
+    {% include 'base/footer.html' %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>
