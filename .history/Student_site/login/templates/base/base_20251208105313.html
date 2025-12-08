@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  </head>
+  <body>
+    {% comment %} {% include "PrincipalPages/sidebar.html" %}
+
+    <div class="main-content" id="mainContent">
+      {% include "base/navbar.html" %} 
+      {% include "PrincipalPages/dashboard.html" %} 
+      {% include "PrincipalPages/admin.html" %} 
+      {% include "PrincipalPages/teacher.html" %} 
+      {% include "PrincipalPages/student.html" %} 
+      {% include "PrincipalPages/class.html" %}
+      {% include "PrincipalPages/subject.html" %} 
+      {% include "PrincipalPages/assign_subject.html" %}
+      {% include "PrincipalPages/syllabus.html" %}
+      {% include  "PrincipalPages/timetable.html" %} 
+      {% include "PrincipalPages/fees.html"%}
+      {% include "PrincipalPages/exams.html" %} 
+      {% include "PrincipalPages/attendance.html" %}
+      {% include "PrincipalPages/settings.html" %}
+    </div> {% endcomment %}
+      {% include "PrincipalPages/sidebar.html" %}
+    {% comment %} {% include "base/navbar.html" %} {% endcomment %}
+
+    <div class="main-content" id="mainContent">
+    {% include "base/navbar.html" %}
+        {% block content %}
+        {% endblock %}
+    </div>
+  </body>
+  {% comment %} <script>
+    // Toggle sidebar
+    const sideBtn = document.getElementById("side_btn");
+    const sidePanel = document.getElementById("sidePanel");
+    const mainContent = document.getElementById("mainContent");
+
+    sideBtn.onclick = function () {
+      sidePanel.classList.toggle("open");
+      mainContent.classList.toggle("shifted");
+    };
+
+    // Toggle submenu
+    function toggleMenu(id, element) {
+      const subMenu = document.getElementById(id);
+      if (subMenu.style.display === "block") {
+        subMenu.style.display = "none";
+        element.classList.remove("active");
+      } else {
+        subMenu.style.display = "block";
+        element.classList.add("active");
+      }
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll(".content-page").forEach((page) => {
+        page.style.display = "none";
+      });
+
+      document.getElementById(pageId).style.display = "block";
+
+      sidePanel.classList.remove("open");
+      mainContent.classList.remove("shifted");
+    }
+
+    window.onload = function () {
+      const tab = "{{ tab }}";
+
+      document.querySelectorAll(".content-page").forEach((page) => {
+        page.style.display = "none";
+      });
+
+      if (tab) {
+        showPage(tab + "Page");
+      } else {
+        showPage("dashboardPage");
+      }
+    };
+  </script> {% endcomment %}
+</html>

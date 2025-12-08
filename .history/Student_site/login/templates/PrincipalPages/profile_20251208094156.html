@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+    <div class="profile-container">
+    <!-- Header -->
+    <div class="profile-header">
+        <div class="avatar">
+            {{ user.name|slice:":1"|upper }}
+        </div>
+        <h2>{{ user.name }}</h2>
+        <p class="role">{{ user.role|capfirst }}</p>
+    </div>
+
+    <!-- Details Section -->
+    <div class="profile-grid">
+
+        <div class="profile-item">
+            <label>Email</label>
+            <p>{{ user.email }}</p>
+        </div>
+
+        <div class="profile-item">
+            <label>Admission No</label>
+            <p>{{ user.admission_no|default:"-" }}</p>
+        </div>
+
+        <div class="profile-item">
+            <label>Mobile</label>
+            <p>{{ user.mobile|default:"-" }}</p>
+        </div>
+
+        <div class="profile-item">
+            <label>Date of Birth</label>
+            <p>{{ user.dob|default:"-" }}</p>
+        </div>
+
+        {% if user.role == "student" %}
+        <div class="profile-item">
+            <label>Class</label>
+            <p>{{ user.class_name.class_name }} {{ user.class_name.section }}</p>
+        </div>
+        {% endif %}
+
+        {% if user.role == "teacher" %}
+        <div class="profile-item">
+            <label>Subject</label>
+            <p>{{ user.subject|default:"-" }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Edit Button -->
+    <div class="profile-footer">
+        <a href="{% url 'edit_user' user.id %}" class="btn-edit">Edit Profile</a>
+    </div>
+</div>
+
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+    <!-- Header -->
+    <div class="profile-header">
+        <div class="avatar">
+            {{ user.name|slice:":1"|upper }}
+        </div>
+        <h2>{{ user.name }}</h2>
+        <p class="role">{{ user.role|capfirst }}</p>
+    </div>
+
+    <!-- Details Section -->
+    <div class="profile-grid">
+
+        <div class="profile-item">
+            <label>Email</label>
+            <p>{{ user.email }}</p>
+        </div>
+
+        <div class="profile-item">
+            <label>Admission No</label>
+            <p>{{ user.admission_no|default:"-" }}</p>
+        </div>
+
+        <div class="profile-item">
+            <label>Mobile</label>
+            <p>{{ user.mobile|default:"-" }}</p>
+        </div>
+
+        <div class="profile-item">
+            <label>Date of Birth</label>
+            <p>{{ user.dob|default:"-" }}</p>
+        </div>
+
+        {% if user.role == "student" %}
+        <div class="profile-item">
+            <label>Class</label>
+            <p>{{ user.class_name.class_name }} {{ user.class_name.section }}</p>
+        </div>
+        {% endif %}
+
+        {% if user.role == "teacher" %}
+        <div class="profile-item">
+            <label>Subject</label>
+            <p>{{ user.subject|default:"-" }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Edit Button -->
+    <div class="profile-footer">
+        <a href="{% url 'edit_user' user.id %}" class="btn-edit">Edit Profile</a>
+    </div>
+</div>
+</body>
+</html>

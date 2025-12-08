@@ -1,0 +1,47 @@
+ <h2>Subjects</h2>
+
+  <!-- Add Subject Form -->
+  <form method="POST" action="{% url 'add_only_subject' %}">
+    {% csrf_token %}
+
+    <input
+      type="text"
+      name="subject_name"
+      placeholder="Subject Name"
+      required
+    />
+
+    <input
+      type="text"
+      name="subject_code"
+      placeholder="Subject Code"
+      required
+    />
+
+    <button type="submit">Add Subject</button>
+  </form>
+
+  <!-- Subject Table -->
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Subject Name</th>
+      <th>Subject Code</th>
+      <th>Actions</th>
+    </tr>
+
+    {% for s in subjects_list %}
+    <tr>
+      <td>{{ s.id }}</td>
+      <td>{{ s.subject_name }}</td>
+      <td>{{ s.subject_code }}</td>
+
+      <td>
+        <a href="{% url 'edit_subject_base' s.id %}">Edit</a>
+        <a href="{% url 'delete_subject_base' s.id %}">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+s

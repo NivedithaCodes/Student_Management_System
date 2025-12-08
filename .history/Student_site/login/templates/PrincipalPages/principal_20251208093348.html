@@ -1,0 +1,71 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+{% if tab == "dashboard" %}
+    {% include "PrincipalPages/dashboard.html" %}
+
+{% elif tab == "admin" %}
+    {% include "PrincipalPages/admin.html" %}
+
+{% elif tab == "teacher" %}
+    {% include "PrincipalPages/teacher.html" %}
+
+{% elif tab == "student" %}
+    {% include "PrincipalPages/student.html" %}
+
+{% elif tab == "class" %}
+    {% include "PrincipalPages/class.html" %}
+
+{% elif tab == "subject" %}
+    {% include "PrincipalPages/subject.html" %}
+
+{% elif tab == "assign" %}
+    {% include "PrincipalPages/assign_subject.html" %}
+
+{% elif tab == "syllabus" %}
+    {% include "PrincipalPages/syllabus.html" %}
+
+{% elif tab == "timetable" %}
+    {% include "PrincipalPages/timetable.html" %}
+
+{% elif tab == "fees" %}
+    {% include "PrincipalPages/fees.html" %}
+
+{% elif tab == "exams" %}
+    {% include "PrincipalPages/exams.html" %}
+
+{% elif tab == "attendance" %}
+    {% include "PrincipalPages/attendance.html" %}
+
+{% elif tab == "settings" %}
+    {% include "PrincipalPages/settings.html" %}
+{% endif %}
+
+<script>
+    // Toggle sidebar
+    const sideBtn = document.getElementById("side_btn");
+    const sidePanel = document.getElementById("sidePanel");
+    const mainContent = document.getElementById("mainContent");
+
+    sideBtn.onclick = function () {
+      sidePanel.classList.toggle("open");
+      mainContent.classList.toggle("shifted");
+    };
+
+    // Toggle submenu
+    function toggleMenu(id, element) {
+      const subMenu = document.getElementById(id);
+      if (subMenu.style.display === "block") {
+        subMenu.style.display = "none";
+        element.classList.remove("active");
+      } else {
+        subMenu.style.display = "block";
+        element.classList.add("active");
+      }
+    }
+
+  </script> 
+
+{% endblock %}
+

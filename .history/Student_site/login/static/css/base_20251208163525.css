@@ -1,17 +1,8 @@
- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Student Management System</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <style>body {
+body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #f5f7fa;
-    display: flex;
+    /* display: flex; */
     height: 100vh;
     overflow: hidden;
 }
@@ -254,19 +245,108 @@ form button {
     font-weight: bold;
     color: #4e73df;
 }
-</style>
 
-</head>
+/* Container Wrapper */
+.edit-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
 
-<body>
+/* Card */
+.edit-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
 
-    {% include "PrincipalPages/sidebar.html" %}
-    {% include "base/navbar.html" %}
+/* Profile Photo */
+.photo-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    <div class="main-content" id="mainContent">
-        {% block content %}
-        {% endblock %}
-    </div>
+.edit-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
-</body>
-</html>
+/* Initial Placeholder */
+.edit-initial {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: #fff;
+    font-size: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+/* Upload Photo Button */
+.edit-form label {
+    cursor: pointer;
+    color: #4f46e5;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.edit-form input[type="file"] {
+    display: none;
+}
+
+/* Form Fields */
+.edit-form .form-group {
+    margin-bottom: 15px;
+}
+
+.edit-form label {
+    display: block;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.edit-form input[type="text"],
+.edit-form input[type="email"],
+.edit-form input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Disabled fields for class/subject */
+.edit-form input[disabled] {
+    background: #f1f1f1;
+    color: #555;
+    cursor: not-allowed;
+}
+
+/* Save Button */
+.edit-form button {
+    display: block;
+    width: 100%;
+    background: #4f46e5;
+    color: #fff;
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.edit-form button:hover {
+    background: #4338ca;
+}

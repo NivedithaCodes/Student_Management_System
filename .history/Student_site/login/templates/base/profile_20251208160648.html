@@ -1,0 +1,77 @@
+ <!-- PAGE LOADED -->
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+ <div class="profile-wrapper">
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+
+    <!-- Profile Image -->
+    <div class="profile-photo-container">
+      {% if user.photo %}
+        <img src="{{ user.photo.url }}" class="profile-photo" alt="Profile Photo">
+      {% else %}
+        <div class="profile-initial">
+          {{ user.name|slice:":1"|upper }}
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Name & Role -->
+    <h2 class="profile-name">{{ user.name }}</h2>
+    <p class="profile-role">{{ user.role|capfirst }}</p>
+
+    <!-- Information Grid -->
+    <div class="profile-grid">
+      <div class="info-box">
+        <label>Email</label>
+        <p>{{ user.email }}</p>
+      </div>
+
+      <div class="info-box">
+        <label>Mobile</label>
+        <p>{{ user.mobile|default:"—" }}</p>
+      </div>
+
+      <div class="info-box">
+        <label>DOB</label>
+        <p>{{ user.dob|default:"—" }}</p>
+      </div>
+
+      {% if user.role == "student" %}
+      <div class="info-box">
+        <label>Class</label>
+        <p>{{ user.class_name.class_name }} {{ user.class_name.section }}</p>
+      </div>
+      <div class="info-box">
+        <label>Admission No</label>
+        <p>{{ user.admission_no|default:"—" }}</p>
+      </div>
+
+      {% endif %}
+
+      {% if user.role == "teacher" %}
+      <div class="info-box">
+        <label>Subject</label>
+        <p>{{ user.subject|default:"—" }}</p>
+      </div>
+      <div class="info-box">
+        <label>Admission No</label>
+        <p>{{ user.admission_no|default:"—" }}</p>
+      </div>
+
+      {% endif %}
+    </div>
+
+    <div class="edit-btn-wrapper">
+      <a href="{% url 'edit_profile'  %}" class="edit-btn">Edit Profile</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

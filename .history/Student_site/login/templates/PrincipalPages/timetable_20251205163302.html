@@ -1,0 +1,53 @@
+<div id="timetablePage" class="content-page">
+  <h2>Timetable Upload</h2>
+
+  <form
+    method="POST"
+    action="{% url 'add_timetable' %}"
+    enctype="multipart/form-data"
+  >
+    {% csrf_token %}
+
+    <label>Select Class</label>
+    <select name="class_room" required>
+      <option value="">Select Class</option>
+      {% for c in classes %}
+      <option value="{{ c.id }}">{{ c.class_name }} {{ c.section }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Upload Timetable File</label>
+    <input type="file" name="timetable_file" required />
+
+    <button type="submit">Add Timetable</button>
+  </form>
+
+  <hr />
+
+  <h3>Uploaded Timetables</h3>
+
+  <table>
+    <tr>
+      <th>Class</th>
+      <th>File</th>
+      <th>Actions</th>
+    </tr>
+
+    {% for t in timetables %}
+    <tr>
+      <td>{{ t.class_room.class_name }} {{ t.class_room.section }}</td>
+      <td>
+        <a href="{{ t.timetable_file.url }}" target="_blank">View File</a>
+      </td>
+      <td>
+        <a href="{% url 'edit_timetable' t.id %}?tab=timetable">Edit</a>
+        <a
+          href="{% url 'delete_timetable' t.id %}"
+          onclick="return confirm('Delete this timetable?')"
+          >Delete</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
