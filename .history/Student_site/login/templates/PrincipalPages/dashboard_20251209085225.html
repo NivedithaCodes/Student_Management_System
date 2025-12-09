@@ -1,0 +1,58 @@
+ <h2>Dashboard</h2>
+  <div class="dashboard-grid">
+    <div class="card">
+      <i class="fa-solid fa-user-graduate"></i>
+      <h3>My Profile</h3>
+      <p>View or edit your profile details.</p>
+      <a href="?tab=profile">Open</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-book"></i>
+      <h3>Courses</h3>
+      <p>Check courses you are enrolled in.</p>
+      <a href="?tab=settings">Open</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-clipboard-check"></i>
+      <h3>Attendance</h3>
+      <p>View your attendance record.</p>
+      <a href="?tab=attendance">Open</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-chart-line"></i>
+      <h3>Exams</h3>
+      <p>Check marks & results.</p>
+      <a href="?tab=exams">Open</a>
+    </div>
+
+    <!-- Total Students -->
+    <div class="card">
+      <div class="dashboard-box-icon">
+        <i class="fa fa-users"></i>
+      </div>
+      <h3>Total Students</h3>
+      <p id="card-para">{{ total_students }}</p>
+      <a href="?tab=student">Open</a>
+    </div>
+
+    <!-- Total Teachers -->
+    <div class="card">
+      <div class="dashboard-box-icon">
+        <i class="fa fa-chalkboard-teacher"></i>
+      </div>
+      <h3>Total Teachers</h3>
+      <p id="card-para">{{ total_teachers }}</p>
+      <a href="?tab=teacher">Open</a>
+    </div>
+
+    <!-- Total Subjects -->
+    <div class="card">
+      <div class="dashboard-box-icon">
+        <i class="fa fa-book"></i>
+      </div>
+      <h3>Total Subjects</h3>
+      <p id="card-para">{{ total_subjects }}</p>
+      <a href="?tab=subject">Open</a>
+    </div>
+  </div>
+

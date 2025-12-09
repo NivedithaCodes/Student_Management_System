@@ -1,0 +1,100 @@
+{% load static %}
+<div class="attendance-box">
+    <div class="attendance-header">Attendance Management</div>
+
+    <form method="POST" action="{% url 'submit_attendance' %}">
+        {% csrf_token %}
+        <div class="select-row">
+            <!-- Class Select -->
+            <div>
+                <label>Select Class</label><br>
+                <select name="class_id" id="classSelect" onchange="loadSubjects()" required>
+                    <option value="">-- Select Class --</option>
+                    {% for cls in classes %}
+                        {% if cls.class_teacher and cls.class_teacher.id == request.session.user_id %}
+                            <option value="{{ cls.id }}" data-role="class-teacher">{{ cls.class_name }} (Your Class)</option>
+                        {% else %}
+                            <option value="{{ cls.id }}" data-role="subject-teacher">{{ cls.class_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Subject Select -->
+            <div>
+                <label>Select Subject</label><br>
+                <select name="subject_id" id="subjectSelect" required>
+                    <option value="">-- Select Subject --</option>
+                </select>
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label>Date</label><br>
+                <input type="date" name="date" value="{{ today }}">
+            </div>
+        </div>
+
+        <!-- Students Table -->
+        <table class="student-table" id="studentTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Present</th>
+                </tr>
+            </thead>
+            <tbody id="studentBody"></tbody>
+        </table>
+
+        <button class="submit-btn" id="submitBtn" style="display:none;">Submit Attendance</button>
+    </form>
+</div>
+
+<script>
+const studentsByClass = JSON.parse('{{ students_by_class|safe }}');
+const subjects = JSON.parse('{{ subjects_json|safe }}');
+const loggedInTeacher = {{ request.session.user_id }};
+
+function loadSubjects() {
+    const classId = document.getElementById("classSelect").value;
+    const subjectSelect = document.getElementById("subjectSelect");
+    subjectSelect.innerHTML = `<option value="">-- Select Subject --</option>`;
+    if (!classId) return;
+
+    subjects.forEach(sub => {
+        if (sub.class_id == classId) {
+            const classOption = document.querySelector(`#classSelect option[value="${classId}"]`);
+            const isClassTeacher = classOption.dataset.role === "class-teacher";
+            if (sub.teacher_id == loggedInTeacher || isClassTeacher) {
+                subjectSelect.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
+            }
+        }
+    });
+}
+
+function loadStudents() {
+    const classId = document.getElementById("classSelect").value;
+    const subjectId = document.getElementById("subjectSelect").value;
+    if (!classId || !subjectId) return;
+
+    const studentTable = document.getElementById("studentTable");
+    const studentBody = document.getElementById("studentBody");
+
+    studentBody.innerHTML = "";
+    studentTable.style.display = "table";
+    document.getElementById("submitBtn").style.display = "block";
+
+    const students = studentsByClass[classId] || [];
+    students.forEach(s => {
+        studentBody.innerHTML += `
+            <tr>
+                <td>${s.roll_no}</td>
+                <td>${s.name}</td>
+                <td><input type="checkbox" name="present_${s.id}"></td>
+            </tr>`;
+    });
+}
+
+document.getElementById("subjectSelect").addEventListener("change", loadStudents);
+</script>

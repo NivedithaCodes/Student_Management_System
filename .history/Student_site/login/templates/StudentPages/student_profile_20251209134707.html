@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<h2>{{ student.name }} - Profile</h2>
+
+<p><strong>Admission No:</strong> {{ student.admission_no }}</p>
+<p><strong>Email:</strong> {{ student.email }}</p>
+<p><strong>Date of Birth:</strong> {{ student.dob }}</p>
+<p><strong>Mobile:</strong> {{ student.mobile }}</p>
+<p><strong>Class:</strong> {{ student.class_name.class_name }}</p>
+<p><strong>Section:</strong> {{ student.class_name.section }}</p>
+{% endblock %}

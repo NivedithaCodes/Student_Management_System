@@ -1,0 +1,58 @@
+<div class="side-panel" id="sidePanel">
+  <h2>Admin</h2>
+  <a
+    href="{% url 'profile' %}"
+    class="{% if request.path == '/profile/' %}active{% endif %}"
+    style="display: flex; align-items: center; gap: 10px; padding: 10px"
+  >
+    <i class="fa fa-user"></i> Profile
+  </a>
+  <hr />
+  <a href="/principal/?tab=dashboard"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/principal/?tab=admin"><i class="fa fa-user-shield"></i> Admin</a>
+  <a href="/principal/?tab=teacher"><i class="fa fa-chalkboard-teacher"></i> Teacher</a>
+  <a href="/principal/?tab=student"><i class="fa fa-user-graduate"></i> Student</a>
+
+  <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+    <span><i class="fa fa-book"></i> Academics</span>
+    <span class="arrow">&lt;</span>
+  </div>
+  <div id="academicsMenu" class="subMenu">
+    <a href="/principal/?tab=class"><i class="fa fa-school"></i> Class</a>
+    <a href="/principal/?tab=subject"><i class="fa fa-book-open"></i> Subject</a>
+    <a href="/principal/?tab=assign"><i class="fa fa-tasks"></i> Assign Subject</a>
+    <a href="/principal/?tab=syllabus"><i class="fa fa-file-alt"></i> Syllabus</a>
+    <a href="/principal/?tab=timetable"><i class="fa fa-calendar-alt"></i> Timetable</a>
+  </div>
+
+  <a href="/principal/?tab=fees"><i class="fa fa-money-bill-wave"></i> Fees Collection</a>
+  <a href="/principal/?tab=exams"><i class="fa fa-clipboard-check"></i> Examinations</a>
+  <a href="/principal/?tab=attendance"><i class="fa fa-user-check"></i> Attendance</a>
+  <a href="{% url 'settings' %}"><i class="fa fa-cog"></i> Settings</a>
+</div>
+
+  
+
+  <a href="/principal/?tab=dashboard"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/principal/?tab=admin"><i class="fa fa-user-shield"></i> Admin</a>
+  <a href="/principal/?tab=teacher"><i class="fa fa-chalkboard-teacher"></i> Teacher</a>
+  <a href="/principal/?tab=student"><i class="fa fa-user-graduate"></i> Student</a>
+
+  <!-- Academics Menu -->
+  <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+    <span><i class="fa fa-book"></i> Academics</span>
+    <span class="arrow">&lt;</span>
+  </div>
+  <div id="academicsMenu" class="subMenu">
+    <a href="/principal/?tab=class"><i class="fa fa-school"></i> Class</a>
+    <a href="/principal/?tab=subject"><i class="fa fa-book-open"></i> Subject</a>
+    <a href="/principal/?tab=assign"><i class="fa fa-tasks"></i> Assign Subject</a>
+    <a href="/principal/?tab=syllabus"><i class="fa fa-file-alt"></i> Syllabus</a>
+    <a href="/principal/?tab=timetable"><i class="fa fa-calendar-alt"></i> Timetable</a>
+  </div>
+
+  <a href="/principal/?tab=fees"><i class="fa fa-money-bill-wave"></i> Fees Collection</a>
+  <a href="/principal/?tab=exams"><i class="fa fa-clipboard-check"></i> Examinations</a>
+  <a href="/principal/?tab=attendance"><i class="fa fa-user-check"></i> Attendance</a>
+  <a href="{% url 'settings' %}"><i class="fa fa-cog"></i> Settings</a>
+</div>

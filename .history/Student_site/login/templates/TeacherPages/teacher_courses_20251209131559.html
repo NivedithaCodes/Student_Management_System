@@ -1,0 +1,18 @@
+<h2>Assigned Courses</h2>
+
+{% if subjects %}
+  <div class="courses-grid">
+    {% for assign in subjects %}
+      <div class="card course-card">
+        <div class="card-icon">
+          <i class="fa fa-book-open"></i>
+        </div>
+        <h3>{{ assign.subject.subject_name }}</h3>
+        <p><strong>Class:</strong> {{ assign.assigned_class.class_name }}</p>
+        <p><strong>Section:</strong> {{ assign.assigned_class.section }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No courses assigned yet.</p>
+{% endif %}

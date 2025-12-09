@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+  </head>
+  <body>
+
+  <!-- Sidebar -->
+ 
+  {% include "PrincipalPages/sidebar.html" %}
+  <!-- Sidebar -->
+{% comment %} {% if user.is_authenticated %}
+  {% if user.role == 'principal' %}
+      {% include "PrincipalPages/sidebar.html" %}
+  {% elif user.role == 'teacher' %}
+      {% include "TeacherPages/sidebar.html" %}
+  {% elif user.role == 'student' %}
+      {% include "StudentPages/sidebar.html" %}
+  {% endif %}
+{% endif %} {% endcomment %}
+
+    {% comment %} {% include "base/navbar.html" %} {% endcomment %}
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+  <!-- NAVBAR FROM BASE -->
+    {% comment %} {% include "base/navbar.html" %} {% endcomment %}
+    {% block content %}
+    {% endblock %}
+  </div>
+
+
+  <script>
+     document.addEventListener("DOMContentLoaded", function() {
+      const sideBtn = document.getElementById("side_btn");
+      const sidePanel = document.getElementById("sidePanel");
+      const mainContent = document.getElementById("mainContent");
+
+      if (sideBtn && sidePanel && mainContent) {
+        sideBtn.addEventListener("click", function() {
+          sidePanel.classList.toggle("open");
+          mainContent.classList.toggle("shifted");
+        });
+      }
+
+      // Submenu toggle (for sidebar items with submenus)
+      window.toggleMenu = function(id, element) {
+        const subMenu = document.getElementById(id);
+        if (subMenu.style.display === "block") {
+          subMenu.style.display = "none";
+          element.classList.remove("active");
+        } else {
+          subMenu.style.display = "block";
+          element.classList.add("active");
+        }
+      };
+     });
+  </script> 
+ 
+  </body>
+</html>

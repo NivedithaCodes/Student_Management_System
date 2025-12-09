@@ -1,0 +1,55 @@
+<h2>Dashboard</h2>
+<div class="dashboard-grid">
+
+  <!-- My Profile -->
+  <div class="card">
+    <i class="fa-solid fa-user"></i>
+    <h3>My Profile</h3>
+    <p>View or edit your profile details.</p>
+    <a href="{% url 'profile' %}">Open</a>
+  </div>
+
+  <!-- My Classes -->
+  <div class="card">
+    <i class="fa-solid fa-chalkboard"></i>
+    <h3>My Classes</h3>
+    <p>View all classes assigned to you.</p>
+    <p id="card-para">{{ classes.count }}</p>
+    <a href="?tab=class">Open</a>
+  </div>
+
+  <!-- My Subjects -->
+  <div class="card">
+    <i class="fa-solid fa-book"></i>
+    <h3>My Subjects</h3>
+    <p>Check the subjects you are teaching.</p>
+    <p id="card-para">{{ subjects.count }}</p>
+    <a href="?tab=subject">Open</a>
+  </div>
+
+  <!-- My Students -->
+  <div class="card">
+    <i class="fa-solid fa-user-graduate"></i>
+    <h3>My Students</h3>
+    <p>View all students in your assigned classes.</p>
+    <p id="card-para">{{ users_student.count }}</p>
+    <a href="?tab=student">Open</a>
+  </div>
+
+  <!-- Attendance -->
+  <div class="card">
+    <i class="fa-solid fa-clipboard-check"></i>
+    <h3>Attendance</h3>
+    <p>Mark or view attendance of your students.</p>
+    <a href="?tab=attendance">Open</a>
+  </div>
+
+  <!-- Exams / Marks -->
+  <div class="card">
+    <i class="fa-solid fa-chart-line"></i>
+    <h3>Exams / Marks</h3>
+    <p>Add or view marks for your students.</p>
+    <a href="?tab=marks">Open</a>
+  </div>
+
+</div>

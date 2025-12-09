@@ -1,0 +1,45 @@
+{% for item in classes_info %}
+    <div class="class-card">
+        <h3>{{ item.class.class_name }} - Section {{ item.class.section }}</h3>
+
+        {% if item.is_class_teacher %}
+            <h4>Class Teacher Students</h4>
+            <ul>
+            {% for student in item.class_students %}
+                <li>{{ student.name }} ({{ student.admission_no }})</li>
+            {% empty %}
+                <li>No students in this class.</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        <h4>Subject Students</h4>
+        <ul>
+        {% for student in item.subject_students %}
+            <li>{{ student.name }} ({{ student.admission_no }})</li>
+        {% empty %}
+            <li>No students for your subjects in this class.</li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+{% comment %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_courses.css' %}">
+<h2>Assigned Courses</h2>
+
+{% if subjects %}
+  <div class="courses-grid">
+    {% for assign in subjects %}
+      <div class="card course-card">
+        <div class="card-icon">
+          <i class="fa fa-book-open"></i>
+        </div>
+        <h3>{{ assign.subject.subject_name }}</h3>
+        <p><strong>Class:</strong> {{ assign.assigned_class.class_name }}</p>
+        <p><strong>Section:</strong> {{ assign.assigned_class.section }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No courses assigned yet.</p>
+{% endif %} {% endcomment %}

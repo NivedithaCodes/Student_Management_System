@@ -1,0 +1,33 @@
+<div class="side-panel" id="sidePanel">
+  <h2>Admin</h2>
+  <a
+    href="{% url 'profile' %}"
+    class="{% if request.path == '/profile/' %}active{% endif %}"
+    style="display: flex; align-items: center; gap: 10px; padding: 10px"
+  >
+    <i class="fa fa-user"></i> Profile
+  </a>
+  <hr />
+  <a href="/principal/?tab=dashboard">Dashboard</a>
+  <a href="/principal/?tab=admin">Admin</a>
+  <a href="/principal/?tab=teacher">Teacher</a>
+  <a href="/principal/?tab=student">Student</a>
+
+  <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+    <span>Academics</span>
+    <span class="arrow">&lt;</span>
+  </div>
+  <div id="academicsMenu" class="subMenu">
+    <a href="/principal/?tab=class">Class</a>
+    <a href="/principal/?tab=subject">Subject</a>
+    <a href="/principal/?tab=assign">Assign Subject</a>
+    <a href="/principal/?tab=syllabus">Syllabus</a>
+    <a href="/principal/?tab=timetable">Timetable</a>
+  </div>
+
+  <a href="/principal/?tab=fees">Fees Collection</a>
+  <a href="/principal/?tab=exams">Examinations</a>
+  <a href="/principal/?tab=attendance">Attendance</a>
+  <a href="{% url 'settings' %}">Settings</a>
+
+</div>

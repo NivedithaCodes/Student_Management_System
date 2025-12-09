@@ -1,0 +1,291 @@
+{% comment %} {% extends "base/base.html" %} {% endcomment %}
+{% load static %}
+
+{% comment %} {% block extra_css %} {% endcomment %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+{% comment %} {% endblock %} {% endcomment %}
+
+{% comment %} {% block content %} {% endcomment %}
+<h2>Mark Attendance</h2>
+
+<div class="attendance-container">
+
+  {% if classes %}
+    <form method="post" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+
+      <div class="attendance-controls">
+        <div class="control">
+          <label for="class_select">Class</label>
+          <select id="class_select" name="class_id" required>
+            <option value="">-- Select class --</option>
+            {% for c in classes %}
+              <option value="{{ c.id }}">{{ c.class_name }} - Section {{ c.section }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="subject_select">Subject (your assigned subjects)</label>
+          <select id="subject_select" name="subject_id">
+            <option value="">-- Select subject (optional) --</option>
+            {% for a in subjects %}
+              <option value="{{ a.id }}" data-class="{{ a.assigned_class.id }}">{{ a.subject.subject_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="date_input">Date</label>
+          <input type="date" id="date_input" name="date" value="{{ today|default:None }}">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="students-area">
+        <p class="muted">Select a class to load students. Checkboxes are enabled only if you (the logged-in teacher) are allowed to mark attendance for that student — i.e. you are the class teacher for the class OR you are the teacher for the selected subject.</p>
+
+        <table class="attendance-table" id="students_table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Admission No</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th>Present</th>
+            </tr>
+          </thead>
+          <tbody id="students_tbody">
+            <tr><td colspan="6" class="muted">No class selected</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit">Submit Attendance</button>
+      </div>
+    </form>
+  {% else %}
+    <p>You are not assigned to any class/subjects.</p>
+  {% endif %}
+
+</div>
+
+<!-- Data bootstrapped for JS: students_by_class and subject_students_map -->
+<script>
+  // students_by_class: { class_id: [ {id, name, admission_no, class_name, section}, ... ] }
+  const studentsByClass = {};
+  {% for cid, students in students_by_class.items %}
+    studentsByClass["{{ cid }}"] = [
+      {% for s in students %}
+        {
+          id: {{ s.id }},
+          name: "{{ s.name|escapejs }}",
+          admission_no: "{{ s.admission_no|escapejs }}",
+          class_name: "{{ s.class_name.class_name|escapejs }}",
+          section: "{{ s.class_name.section|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
+  {% endfor %}
+
+  // subject_students_map: { assignsubject_id: [student_id, ...] }
+  const subjectStudentsMap = {};
+  {% for sid, stu_ids in subject_students_map.items %}
+    subjectStudentsMap["{{ sid }}"] = [ {% for i in stu_ids %} {{ i }}{% if not forloop.last %}, {% endif %}{% endfor %} ];
+  {% endfor %}
+
+  // Helper: check if teacher is class teacher for a class
+  const classTeacherMap = {};
+  {% for c in classes %}
+    // mark if logged-in teacher is class_teacher
+    classTeacherMap["{{ c.id }}"] = {{ "true" if c.class_teacher and c.class_teacher.id == request.session.user_id|default:"" else "false" }};
+  {% endfor %}
+
+  // Fallback: if above session id not accessible, we can check on server by rendering boolean map in context instead.
+</script>
+
+<script>
+  // DOM references
+  const classSelect = document.getElementById('class_select');
+  const subjectSelect = document.getElementById('subject_select');
+  const tbody = document.getElementById('students_tbody');
+
+  // Utility: render students for selected class and subject.
+  function renderStudents() {
+    const classId = classSelect.value;
+    const assignSubjectId = subjectSelect.value;
+
+    // Clear
+    tbody.innerHTML = '';
+
+    if (!classId) {
+      tbody.innerHTML = '<tr><td colspan="6" class="muted">No class selected</td></tr>';
+      return;
+    }
+
+    const list = studentsByClass[classId] || [];
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">No students in this class.</td></tr>';
+      return;
+    }
+
+    // Determine permission: teacher is class teacher OR teacher is subject teacher for selected subject
+    // We cannot reliably check server-side teacher id in JS; but enabling/disabling logic uses:
+    // - if teacher is class teacher for that class: enable all checkboxes
+    // - else if assignSubjectId selected: enable checkboxes only for students present in subjectStudentsMap[assignSubjectId]
+    // - else: disable all (teacher not class teacher and no subject selected)
+    const isClassTeacher = classTeacherMap[classId] === true || classTeacherMap[classId] === "true";
+
+    for (let i = 0; i < list.length; i++) {
+      const s = list[i];
+      const tr = document.createElement('tr');
+
+      // #, name, admission, class, section
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td>${s.name}</td>
+        <td>${s.admission_no || ''}</td>
+        <td>${s.class_name}</td>
+        <td>${s.section}</td>
+        <td class="present-cell"></td>
+      `;
+
+      // create checkbox and enable/disable based on permission
+      const td = tr.querySelector('.present-cell');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'present_' + s.id;
+      checkbox.value = 'present';
+
+      let enabled = false;
+      if (isClassTeacher) {
+        enabled = true;
+      } else if (assignSubjectId) {
+        const allowedStudents = subjectStudentsMap[assignSubjectId] || [];
+        enabled = allowedStudents.indexOf(s.id) !== -1;
+      }
+
+      checkbox.disabled = !enabled;
+      if (!enabled) {
+        // show tooltip or small notice
+        checkbox.title = 'You are not allowed to mark attendance for this student (not class teacher and not teaching selected subject).';
+      }
+
+      td.appendChild(checkbox);
+      tbody.appendChild(tr);
+    }
+  }
+
+  // When class changes, limit subject options to those assigned to the selected class
+  classSelect.addEventListener('change', function () {
+    const classId = this.value;
+
+    // Filter subjectSelect options: show only those subjects whose data-class == classId (or allow all if blank)
+    for (let i = 0; i < subjectSelect.options.length; i++) {
+      const opt = subjectSelect.options[i];
+      const dataClass = opt.getAttribute('data-class');
+      if (!dataClass || dataClass === classId || opt.value === '') {
+        opt.style.display = '';
+      } else {
+        opt.style.display = 'none';
+      }
+    }
+
+    // reset subject selection if its class doesn't match
+    if (subjectSelect.value) {
+      const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+      if (selOpt && selOpt.getAttribute('data-class') !== classId) {
+        subjectSelect.value = '';
+      }
+    }
+
+    renderStudents();
+  });
+
+  // When subject changes, just re-render the students to enable/disable checkboxes based on subjectStudentsMap
+  subjectSelect.addEventListener('change', function () {
+    renderStudents();
+  });
+
+  // Initial render (if the first class exists)
+  if (classSelect.value) {
+    renderStudents();
+  }
+</script>
+
+{% comment %} {% endblock %} {% endcomment %}
+ 
+{% comment %} 
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<h2>Mark Attendance</h2>
+
+<div class="attendance-container">
+
+    {% if classes %}
+    <form method="post" action="{% url 'submit_attendance' %}">
+        {% csrf_token %}
+
+        <!-- Select Class -->
+        <label for="class_select">Select Class:</label>
+        <select id="class_select" name="class_id" required>
+            <option value="">-- Select Class --</option>
+            {% for cls in classes %}
+                <option value="{{ cls.id }}">{{ cls.class_name }} - Section {{ cls.section }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Select Subject -->
+        <label for="subject_select">Select Subject:</label>
+        <select id="subject_select" name="subject_id" required>
+            <option value="">-- Select Subject --</option>
+            {% for subject in subjects %}
+                <option value="{{ subject.id }}">{{ subject.subject.subject_name }}</option>
+            {% endfor %}
+        </select>
+
+        <hr>
+
+        <!-- Students Table -->
+        <table class="attendance-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Admission No</th>
+                    <th>Class</th>
+                    <th>Section</th>
+                    <th>Present</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in users_student %}
+                    <tr>
+                        <td>{{ item.student.name }}</td>
+                        <td>{{ item.student.admission_no }}</td>
+                        <td>{{ item.student.class_name.class_name }}</td>
+                        <td>{{ item.student.class_name.section }}</td>
+                        <td>
+                            <input type="checkbox" name="present_{{ item.student.id }}" value="present">
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No students found for selected class/subject.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn-submit">Submit Attendance</button>
+    </form>
+    {% else %}
+        <p>You are not assigned to any class or subjects.</p>
+    {% endif %}
+
+</div> {% endcomment %}
+
+ 

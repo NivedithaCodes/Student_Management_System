@@ -1,0 +1,171 @@
+ {% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Attendance</title>
+    <link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+    <style>
+    .attendance-box {
+        background: #ffffff;
+        padding: 25px;
+        margin: 20px auto;
+        width: 95%;
+        border-radius: 14px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    .attendance-header {
+        font-size: 22px;
+        font-weight: bold;
+        border-left: 5px solid #4b73ff;
+        padding-left: 10px;
+        margin-bottom: 20px;
+    }
+    .select-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .select-row select, input[type="date"] {
+        padding: 10px;
+        width: 220px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    .student-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .student-table th {
+        background: #4b73ff;
+        color: #fff;
+        padding: 10px;
+    }
+    .student-table td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    button.submit-btn {
+        margin-top: 20px;
+        background: #4b73ff;
+        padding: 12px 25px;
+        border: none;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    button.submit-btn:hover {
+        background: #3e5ed8;
+    }
+    .disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+    </style>
+</head>
+<body>
+<div class="attendance-box">
+    <div class="attendance-header">Attendance Management</div>
+
+    <form method="POST" action="{% url 'submit_attendance' %}">
+        {% csrf_token %}
+        <div class="select-row">
+            <!-- CLASS SELECT -->
+            <div>
+                <label><b>Select Class</b></label><br>
+                <select name="class_id" id="classSelect" onchange="loadSubjects()" required>
+                    <option value="">-- Select Class --</option>
+                    {% for cls in classes %}
+                        {% if cls.class_teacher and cls.class_teacher.id == teacher.id %}
+                            <option value="{{ cls.id }}" data-role="class-teacher">{{ cls.class_name }} (Your Class)</option>
+                        {% else %}
+                            <option value="{{ cls.id }}" data-role="subject-teacher">{{ cls.class_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- SUBJECT SELECT -->
+            <div>
+                <label><b>Select Subject</b></label><br>
+                <select name="subject_id" id="subjectSelect" required>
+                    <option value="">-- Select Subject --</option>
+                </select>
+            </div>
+
+            <!-- DATE -->
+            <div>
+                <label><b>Date</b></label><br>
+                <input type="date" name="date" value="{{ today }}">
+            </div>
+        </div>
+
+        <!-- STUDENT LIST -->
+        <table class="student-table" id="studentTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Present</th>
+                </tr>
+            </thead>
+            <tbody id="studentBody"></tbody>
+        </table>
+
+        <button class="submit-btn" id="submitBtn" style="display:none;">Submit Attendance</button>
+    </form>
+</div>
+
+<script>
+const studentsByClass = JSON.parse('{{ students_by_class|safe }}');
+const subjects = JSON.parse('{{ subjects_json|safe }}');
+const loggedInTeacher = {{ teacher.id }};
+
+function loadSubjects() {
+    const classId = document.getElementById("classSelect").value;
+    const subjectSelect = document.getElementById("subjectSelect");
+    subjectSelect.innerHTML = `<option value="">-- Select Subject --</option>`;
+    if(!classId) return;
+
+    subjects.forEach(sub => {
+        if(sub.class_id == classId) {
+            const classRole = document.querySelector(`#classSelect option[value="${classId}"]`).dataset.role;
+            if(sub.teacher_id == loggedInTeacher || classRole === "class-teacher") {
+                subjectSelect.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
+            }
+        }
+    });
+}
+
+function loadStudents() {
+    const classId = document.getElementById("classSelect").value;
+    const subjectId = document.getElementById("subjectSelect").value;
+    if(!classId || !subjectId) return;
+
+    const studentTable = document.getElementById("studentTable");
+    const studentBody = document.getElementById("studentBody");
+
+    studentBody.innerHTML = "";
+    studentTable.style.display = "table";
+    document.getElementById("submitBtn").style.display = "block";
+
+    const students = studentsByClass[classId];
+    const selectedSubject = subjects.find(s => s.id == subjectId);
+    const canMark = (selectedSubject.teacher_id == loggedInTeacher);
+
+    students.forEach(s => {
+        studentBody.innerHTML += `
+            <tr>
+                <td>${s.roll_no}</td>
+                <td>${s.name}</td>
+                <td>
+                    <input type="checkbox" name="present_${s.id}" ${canMark ? '' : 'disabled class="disabled"'}>
+                </td>
+            </tr>`;
+    });
+}
+
+document.getElementById("subjectSelect").addEventListener("change", loadStudents);
+</script>
+</body>
+</html>

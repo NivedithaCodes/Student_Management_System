@@ -1,0 +1,496 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<h2>Mark Attendance</h2>
+<div class="attendance-container">
+
+  {% if classes %}
+  <form method="post" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+      <label>Class:</label>
+      <select id="class_select" name="class_id" required>
+        <option value="">-- Select class --</option>
+        {% for c in classes %}
+          <option value="{{ c.id }}">{{ c.class_name }} - Section {{ c.section }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Subject:</label>
+      <select id="subject_select" name="subject_id">
+        <option value="">-- Select subject --</option>
+        {% for a in subjects %}
+          <option value="{{ a.id }}" data-class="{{ a.assigned_class.id }}">{{ a.subject.subject_name }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Date:</label>
+      <input type="date" name="date" value="{{ today }}">
+
+      <table id="students_table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Admission No</th>
+            <th>Present</th>
+          </tr>
+        </thead>
+        <tbody id="students_tbody">
+          <tr><td colspan="4">Select a class</td></tr>
+        </tbody>
+      </table>
+
+      <button type="submit">Submit Attendance</button>
+  </form>
+  {% else %}
+  <p>You are not assigned to any class or subject.</p>
+  {% endif %}
+</div>
+
+<script>
+const classSelect = document.getElementById('class_select');
+const subjectSelect = document.getElementById('subject_select');
+const tbody = document.getElementById('students_tbody');
+
+const studentsByClass = {{ students_by_class|safe }};
+const subjectStudentsMap = {{ subject_students_map|safe }};
+const classTeacherMap = {};
+{% for cid in class_teacher_ids %}
+  classTeacherMap["{{ cid }}"] = true;
+{% endfor %}
+
+function renderStudents() {
+  const classId = classSelect.value;
+  const assignId = subjectSelect.value;
+  tbody.innerHTML = '';
+  if(!classId) { tbody.innerHTML = '<tr><td colspan="4">Select a class</td></tr>'; return; }
+  const students = studentsByClass[classId] || [];
+  if(!students.length){ tbody.innerHTML = '<tr><td colspan="4">No students in this class</td></tr>'; return; }
+
+  const isClassTeacher = classTeacherMap[classId] === true;
+  for(let i=0;i<students.length;i++){
+    const s = students[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${s.name}</td><td>${s.admission_no || ''}</td><td></td>`;
+    const td = tr.querySelector('td:last-child');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.name = 'present_' + s.id; cb.value='present';
+    let enabled = isClassTeacher;
+    if(!enabled && assignId){
+      const allowed = subjectStudentsMap[assignId] || [];
+      enabled = allowed.includes(s.id);
+    }
+    cb.disabled = !enabled;
+    td.appendChild(cb);
+    tbody.appendChild(tr);
+  }
+}
+
+classSelect.addEventListener('change', renderStudents);
+subjectSelect.addEventListener('change', renderStudents);
+</script>
+{% comment %} {% load static %}
+
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<h2>Mark Attendance</h2>
+
+<div class="attendance-container">
+
+  {% if classes %}
+    <form method="post" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+
+      <!-- Controls: Class, Subject, Date -->
+      <div class="attendance-controls">
+        <div class="control">
+          <label for="class_select">Class</label>
+          <select id="class_select" name="class_id" required>
+            <option value="">-- Select class --</option>
+            {% for c in classes %}
+              <option value="{{ c.id }}">{{ c.class_name }} - Section {{ c.section }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="subject_select">Subject</label>
+          <select id="subject_select" name="subject_id">
+            <option value="">-- Select subject --</option>
+            {% for a in subjects %}
+              <option value="{{ a.id }}" data-class="{{ a.assigned_class.id }}">{{ a.subject.subject_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="date_input">Date</label>
+          <input type="date" id="date_input" name="date" value="{{ today|default:None }}">
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Students Table -->
+      <div class="students-area">
+        <p class="muted">
+          Select a class to load students. Checkboxes are enabled only if you are allowed to mark attendance:
+          either as a class teacher (only for subjects with a subject teacher) or as a subject teacher.
+        </p>
+
+        <table class="attendance-table" id="students_table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Admission No</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th>Present</th>
+            </tr>
+          </thead>
+          <tbody id="students_tbody">
+            <tr><td colspan="6" class="muted">No class selected</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit">Submit Attendance</button>
+      </div>
+    </form>
+  {% else %}
+    <p>You are not assigned to any class/subjects.</p>
+  {% endif %}
+
+</div>
+
+<script>
+  // Students by class
+  const studentsByClass = {};
+  {% for cid, students in students_by_class.items %}
+    studentsByClass["{{ cid }}"] = [
+      {% for s in students %}
+        {
+          id: {{ s.id }},
+          name: "{{ s.name|escapejs }}",
+          admission_no: "{{ s.admission_no|escapejs }}",
+          class_name: "{{ s.class_name.class_name|escapejs }}",
+          section: "{{ s.class_name.section|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
+  {% endfor %}
+
+  // Subject -> students
+  const subjectStudentsMap = {};
+  {% for sid, stu_ids in subject_students_map.items %}
+    subjectStudentsMap["{{ sid }}"] = [ {% for i in stu_ids %} {{ i }}{% if not forloop.last %}, {% endif %}{% endfor %} ];
+  {% endfor %}
+
+  // Markable subjects per class
+  const markableSubjectMap = {};
+  {% for cls_id, subj_ids in markable_subject_map.items %}
+    markableSubjectMap["{{ cls_id }}"] = [ {% for s in subj_ids %} {{ s }}{% if not forloop.last %}, {% endif %}{% endfor %} ];
+  {% endfor %}
+
+  // Classes where teacher is class teacher
+  const classTeacherMap = {};
+  {% for c in classes %}
+      {% if c.id in class_teacher_ids %}
+          classTeacherMap["{{ c.id }}"] = true;
+      {% else %}
+          classTeacherMap["{{ c.id }}"] = false;
+      {% endif %}
+  {% endfor %}
+
+  // DOM references
+  const classSelect = document.getElementById('class_select');
+  const subjectSelect = document.getElementById('subject_select');
+  const tbody = document.getElementById('students_tbody');
+
+  // Render students table
+  function renderStudents() {
+    const classId = classSelect.value;
+    const assignSubjectId = subjectSelect.value;
+    tbody.innerHTML = '';
+
+    if (!classId) {
+      tbody.innerHTML = '<tr><td colspan="6" class="muted">No class selected</td></tr>';
+      return;
+    }
+
+    const list = studentsByClass[classId] || [];
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">No students in this class.</td></tr>';
+      return;
+    }
+
+    const markableSubjects = markableSubjectMap[classId] || [];
+    const isClassTeacher = classTeacherMap[classId] === true;
+
+    for (let i = 0; i < list.length; i++) {
+      const s = list[i];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td>${s.name}</td>
+        <td>${s.admission_no || ''}</td>
+        <td>${s.class_name}</td>
+        <td>${s.section}</td>
+        <td class="present-cell"></td>
+      `;
+
+      const td = tr.querySelector('.present-cell');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'present_' + s.id;
+      checkbox.value = 'present';
+
+      let enabled = false;
+      if (assignSubjectId) {
+        // Enable if teacher can mark this subject
+        enabled = markableSubjects.includes(parseInt(assignSubjectId));
+      }
+
+      checkbox.disabled = !enabled;
+      if (!enabled) checkbox.title = 'You cannot mark attendance for this student/subject';
+
+      td.appendChild(checkbox);
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Filter subjects dropdown based on selected class
+  classSelect.addEventListener('change', function () {
+    const classId = this.value;
+
+    for (let i = 0; i < subjectSelect.options.length; i++) {
+      const opt = subjectSelect.options[i];
+      const dataClass = opt.getAttribute('data-class');
+      if (!dataClass || dataClass === classId || opt.value === '') {
+        opt.style.display = '';
+      } else {
+        opt.style.display = 'none';
+      }
+    }
+
+    if (subjectSelect.value) {
+      const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+      if (selOpt && selOpt.getAttribute('data-class') !== classId) {
+        subjectSelect.value = '';
+      }
+    }
+
+    renderStudents();
+  });
+
+  subjectSelect.addEventListener('change', renderStudents);
+
+  // Initial render
+  if (classSelect.value) renderStudents(); {% endcomment %}
+{% comment %} </script> {% endcomment %}
+{% comment %} {% load static %}
+
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<h2>Mark Attendance</h2>
+
+<div class="attendance-container">
+
+  {% if classes %}
+    <form method="post" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+
+      <!-- Controls: Class, Subject, Date -->
+      <div class="attendance-controls">
+        <div class="control">
+          <label for="class_select">Class</label>
+          <select id="class_select" name="class_id" required>
+            <option value="">-- Select class --</option>
+            {% for c in classes %}
+              <option value="{{ c.id }}">{{ c.class_name }} - Section {{ c.section }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="subject_select">Subject</label>
+          <select id="subject_select" name="subject_id">
+            <option value="">-- Select subject --</option>
+            {% for a in subjects %}
+              <option value="{{ a.id }}" data-class="{{ a.assigned_class.id }}">{{ a.subject.subject_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="date_input">Date</label>
+          <input type="date" id="date_input" name="date" value="{{ today|default:None }}">
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Students Table -->
+      <div class="students-area">
+        <p class="muted">
+          Select a class to load students. Checkboxes are enabled only if you are allowed to mark attendance for that student:
+          either as a class teacher (for all subjects of the class) or as a subject teacher (for your subject in that class).
+        </p>
+
+        <table class="attendance-table" id="students_table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Admission No</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th>Present</th>
+            </tr>
+          </thead>
+          <tbody id="students_tbody">
+            <tr><td colspan="6" class="muted">No class selected</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit">Submit Attendance</button>
+      </div>
+    </form>
+  {% else %}
+    <p>You are not assigned to any class/subjects.</p>
+  {% endif %}
+
+</div>
+
+<!-- Data bootstrapped for JS -->
+<script>
+  // Students by class
+  const studentsByClass = {};
+  {% for cid, students in students_by_class.items %}
+    studentsByClass["{{ cid }}"] = [
+      {% for s in students %}
+        {
+          id: {{ s.id }},
+          name: "{{ s.name|escapejs }}",
+          admission_no: "{{ s.admission_no|escapejs }}",
+          class_name: "{{ s.class_name.class_name|escapejs }}",
+          section: "{{ s.class_name.section|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
+  {% endfor %}
+
+  // Subject -> students
+  const subjectStudentsMap = {};
+  {% for sid, stu_ids in subject_students_map.items %}
+    subjectStudentsMap["{{ sid }}"] = [ {% for i in stu_ids %} {{ i }}{% if not forloop.last %}, {% endif %}{% endfor %} ];
+  {% endfor %}
+
+  // Markable subjects per class
+  const markableSubjectMap = {};
+  {% for cls_id, subj_ids in markable_subject_map.items %}
+    markableSubjectMap["{{ cls_id }}"] = [ {% for s in subj_ids %} {{ s }}{% if not forloop.last %}, {% endif %}{% endfor %} ];
+  {% endfor %}
+
+  // Class teacher map
+  const classTeacherMap = {};
+  {% for c in classes %}
+      {% if c.id in class_teacher_ids %}
+          classTeacherMap["{{ c.id }}"] = true;
+      {% else %}
+          classTeacherMap["{{ c.id }}"] = false;
+      {% endif %}
+  {% endfor %}
+
+
+  // DOM references
+  const classSelect = document.getElementById('class_select');
+  const subjectSelect = document.getElementById('subject_select');
+  const tbody = document.getElementById('students_tbody');
+
+  // Render students table
+  function renderStudents() {
+    const classId = classSelect.value;
+    const assignSubjectId = subjectSelect.value;
+    tbody.innerHTML = '';
+
+    if (!classId) {
+      tbody.innerHTML = '<tr><td colspan="6" class="muted">No class selected</td></tr>';
+      return;
+    }
+
+    const list = studentsByClass[classId] || [];
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">No students in this class.</td></tr>';
+      return;
+    }
+
+    const markableSubjects = markableSubjectMap[classId] || [];
+    const isClassTeacher = classTeacherMap[classId] === true || classTeacherMap[classId] === "true";
+
+    for (let i = 0; i < list.length; i++) {
+      const s = list[i];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td>${s.name}</td>
+        <td>${s.admission_no || ''}</td>
+        <td>${s.class_name}</td>
+        <td>${s.section}</td>
+        <td class="present-cell"></td>
+      `;
+
+      const td = tr.querySelector('.present-cell');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'present_' + s.id;
+      checkbox.value = 'present';
+
+      let enabled = false;
+      if (isClassTeacher && assignSubjectId) {
+        enabled = markableSubjects.includes(parseInt(assignSubjectId));
+      } else if (assignSubjectId) {
+        enabled = markableSubjects.includes(parseInt(assignSubjectId));
+      }
+
+      checkbox.disabled = !enabled;
+      if (!enabled) checkbox.title = 'You cannot mark attendance for this student/subject';
+
+      td.appendChild(checkbox);
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Filter subjects dropdown by class
+  classSelect.addEventListener('change', function () {
+    const classId = this.value;
+
+    for (let i = 0; i < subjectSelect.options.length; i++) {
+      const opt = subjectSelect.options[i];
+      const dataClass = opt.getAttribute('data-class');
+      if (!dataClass || dataClass === classId || opt.value === '') {
+        opt.style.display = '';
+      } else {
+        opt.style.display = 'none';
+      }
+    }
+
+    if (subjectSelect.value) {
+      const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+      if (selOpt && selOpt.getAttribute('data-class') !== classId) {
+        subjectSelect.value = '';
+      }
+    }
+
+    renderStudents();
+  });
+
+  subjectSelect.addEventListener('change', renderStudents);
+
+  // Initial render
+  if (classSelect.value) renderStudents();
+</script> {% endcomment %}

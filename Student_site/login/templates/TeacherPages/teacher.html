@@ -1,0 +1,253 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+
+{% if tab == "profile" %}
+    {% include "base/profile.html" %}
+
+{% elif tab == "dashboard" %}
+    {% include "TeacherPages/teacher_dashboard.html" %}
+
+{% elif tab == "classes" %}
+    {% include "TeacherPages/teacher_classes.html" %}
+
+{% elif tab == "exams" %}
+    {% include "TeacherPages/teacher_exams.html" %}
+
+{% elif tab == "marks" %}
+    {% include "TeacherPages/teacher_marks.html" %}
+
+{% elif tab == "attendance" %}
+    {% include "TeacherPages/teacher_attendance.html" %}
+
+{% elif tab == "courses" %}
+    {% include "TeacherPages/teacher_courses.html" %}
+
+{% elif tab == "students" %}
+    {% include "TeacherPages/teacher_students.html" %}
+
+{% elif tab == "notifications" %}
+    {% include "TeacherPages/teacher_notifications.html" %}
+
+{% elif tab == "timetables" %}
+    {% include "TeacherPages/teacher_timetables.html" %}
+
+{% elif tab == "settings" %}
+    {% include "base/settings.html" %}
+
+{% endif %}
+
+{% endblock %}
+
+
+{% comment %} {% extends "base/base.html" %}
+
+{% block content %}
+
+{% if tab == "profile" %}
+    {% include "base/profile.html" %}
+
+{% elif tab == "dashboard" %}
+    {% include "TeacherPages/teacher_dashboard.html" %}
+
+{% elif tab == "classes" %}
+    {% include "TeacherPages/teacher_classes.html" %}
+
+{% elif tab == "exams" %}
+    {% include "TeacherPages/teacher_exams.html" %}
+
+{% elif tab == "marks" %}
+    {% include "TeacherPages/teacher_marks.html" %}
+
+{% elif tab == "attendance" %}
+    {% include "TeacherPages/teacher_attendance.html" %}
+
+{% elif tab == "settings" %}
+    {% include "base/settings.html" %}
+
+{% endif %}
+
+{% endblock %} {% endcomment %}
+
+{% comment %} <!DOCTYPE html>
+ 
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+      <div class="navbar">
+        <button id="side_btn"><i class="fa-solid fa-bars"></i></button>
+        Teacher Dashboard
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+      </div>
+
+      <!-- Assigned Courses -->
+      <div class="content-page" id="coursesPage">
+        <h2>Assigned Courses</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Class</th>
+          </tr>
+          {% for sub in assigned_subjects %}
+          <tr>
+            <td>{{ sub.id }}</td>
+            <td>{{ sub.subject.subject_name }}</td>
+            <td>
+              {{ sub.assigned_class.class_name }} {{ sub.assigned_class.section
+              }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No courses assigned.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- View Students -->
+      <div class="content-page" id="studentsPage">
+        <h2>Student List</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Roll No</th>
+          </tr>
+          {% for std in students %}
+          <tr>
+            <td>{{ std.id }}</td>
+            <td>{{ std.name }}</td>
+            <td>{{ std.roll_no }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No students found.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Mark Attendance -->
+      <div class="content-page" id="attendancePage">
+        <h2>Mark Attendance</h2>
+        <form method="POST" action="{% url 'mark_attendance' %}">
+          {% csrf_token %}
+          <label>Select Subject</label>
+          <select name="assign_id" required>
+            <option disabled selected>Select</option>
+            {% for a in assigned_subjects %}
+            <option value="{{ a.id }}">
+              {{ a.subject.subject_name }} - {{ a.assigned_class.class_name }}
+            </option>
+            {% endfor %}
+          </select>
+
+          <label>Student</label>
+          <select name="student_id" required>
+            {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Status</label>
+          <select name="status">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <!-- Add Marks -->
+      <div class="content-page" id="marksPage">
+        <h2>Add Marks</h2>
+        <form method="POST" action="{% url 'add_marks' %}">
+          {% csrf_token %}
+          <label>Select Subject</label>
+          <select name="assign_id" required>
+            {% for a in assigned_subjects %}
+            <option value="{{ a.id }}">{{ a.subject.subject_name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Student</label>
+          <select name="student_id">
+            {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Marks</label>
+          <input type="number" name="marks" required />
+          <button type="submit">Save</button>
+        </form>
+      </div>
+
+      <!-- View Timetables -->
+      <div class="content-page" id="timetablePage">
+        <h2>Class Timetables</h2>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Class</th>
+            <th>File</th>
+          </tr>
+          {% for t in timetables %}
+          <tr>
+            <td>{{ t.id }}</td>
+            <td>{{ t.class_room.class_name }} {{ t.class_room.section }}</td>
+            <td>
+              {% if t.timetable_file %}
+              <a href="{{ t.timetable_file.url }}" target="_blank">View</a>
+              {% else %} - {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No timetables available.</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Send Notifications -->
+      <div class="content-page" id="notificationsPage">
+        <h2>Send Notification to Admin</h2>
+        <form method="POST" action="{% url 'send_notification' %}">
+          {% csrf_token %}
+          <label>Message</label>
+          <textarea name="message" rows="3" required></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const sideBtn = document.getElementById("side_btn");
+      const sidePanel = document.getElementById("sidePanel");
+      const mainContent = document.getElementById("mainContent");
+
+      sideBtn.onclick = function () {
+        sidePanel.classList.toggle("open");
+        mainContent.classList.toggle("shifted");
+      };
+
+      function showPage(pageId) {
+        document
+          .querySelectorAll(".content-page")
+          .forEach((page) => (page.style.display = "none"));
+        document.getElementById(pageId).style.display = "block";
+        sidePanel.classList.remove("open");
+        mainContent.classList.remove("shifted");
+      }
+
+      window.onload = function () {
+        showPage("coursesPage");
+      };
+    </script>
+  </body>
+</html> {% endcomment %}

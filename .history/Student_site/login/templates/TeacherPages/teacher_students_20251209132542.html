@@ -1,0 +1,21 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_students.css' %}"><h2>My Students</h2>
+
+{% if users_student %}
+  <div class="students-grid">
+    {% for student in users_student %}
+      <div class="card student-card">
+        <div class="card-icon">
+          <i class="fa fa-user-graduate"></i>
+        </div>
+        <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+        <p><strong>Class:</strong> {{ student.class_name }}</p>
+        <p><strong>Section:</strong> {{ student.section }}</p>
+        <p><strong>Email:</strong> {{ student.email }}</p>
+        <p><strong>Phone:</strong> {{ student.phone }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No students assigned yet.</p>
+{% endif %}
