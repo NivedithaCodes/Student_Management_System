@@ -1,0 +1,72 @@
+/* .students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.student-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.student-card .card-icon {
+    font-size: 40px;
+    color: #4a90e2;
+    margin-bottom: 10px;
+}
+
+.student-card h3 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.student-card p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+/* View Profile button */
+/* .student-card .btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.student-card .btn:hover {
+    background-color: #357ABD;
+}
+
+/* Highlight class students */
+.class-student {
+    border: 2px solid #4a90e2;
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}
+
+.class-teacher-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+*/ */

@@ -1,0 +1,89 @@
+ {% extends "base/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/student_profile.css' %}">
+{% comment %} 
+<div class="profile-container">
+    <div class="profile-card">
+        <!-- Profile Photo -->
+        <div class="profile-photo">
+            {% if student.photo %}
+                <img src="{{ student.photo.url }}" alt="{{ student.name }}">
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="{{ student.name }}">
+            {% endif %}
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+            <h2>{{ student.name }}</h2>
+            <p><strong>Admission No:</strong> {{ student.admission_no }}</p>
+            <p><strong>Class:</strong> {{ student.class_name.class_name }}</p>
+            <p><strong>Section:</strong> {{ student.class_name.section }}</p>
+            <p><strong>Email:</strong> {{ student.email }}</p>
+            <p><strong>Mobile:</strong> {{ student.mobile }}</p>
+            <p><strong>Date of Birth:</strong> {{ student.dob }}</p>
+            
+            {% if student.subject %}
+                <p><strong>Subjects:</strong> {{ student.subject }}</p>
+            {% endif %}
+
+            {% if student.class_name.class_teacher == request.user %}
+                <span class="badge">Class Student</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Optional: Back Button -->
+    <div class="back-btn-container">
+        <a href="/teacher/?tab=students" class="btn-back">← Back to Students</a>
+    </div>
+</div> {% endcomment %}
+
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            {% comment %} <img src="{{ student.photo.url }}" alt="Profile Photo" class="profile-img"> {% endcomment %}
+            <img 
+            src="{% if student.photo %}{{ student.photo.url }}{% else %}{% static 'images/default-user.png' %}{% endif %}" 
+            alt="Profile Photo" 
+            class="profile-img"
+            />
+
+            <h2 class="student-name">{{ student.name }}</h2>
+            <p class="student-role">Student</p>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-row">
+                <span class="info-label">Admission No:</span>
+                <span class="info-value">{{ student.admission_no }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Class:</span>
+                <span class="info-value">{{ student.class_name }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ student.email }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Mobile:</span>
+                <span class="info-value">{{ student.mobile }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">DOB:</span>
+                <span class="info-value">{{ student.dob }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

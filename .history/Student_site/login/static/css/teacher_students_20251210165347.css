@@ -1,0 +1,164 @@
+.tab-content-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    background: transparent;
+    font-family: "Poppins", sans-serif;
+}
+
+/* Page title */
+.tab-content-wrapper h2 {
+    text-align: left;
+    font-size: 25px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 20px;
+
+}
+
+/* Section headings */
+.tab-content-wrapper h3 {
+    margin: 20px 0 15px;
+    margin-top: -10px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Filter form */
+.tab-content-wrapper form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tab-content-wrapper form select {
+    padding: 10px 14px;
+    margin-top: 0px;
+    border-radius: 8px;
+    border: 1px solid #cfd6e3;
+    font-size: 14px;
+    width: 32%
+}
+
+.tab-content-wrapper form button {
+    margin-top: 0px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background-color: #4b7bec;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tab-content-wrapper form button:hover {
+    background-color: #3867d6;
+}
+
+/* Students grid */
+.tab-content-wrapper .students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* Student card */
+.tab-content-wrapper .student-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.tab-content-wrapper .student-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Card icon */
+.tab-content-wrapper .student-card .card-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 10px;
+    background: #eaf0ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-content-wrapper .student-card .card-icon i {
+    font-size: 28px;
+    color: #4b7bec;
+}
+
+/* Student info */
+.tab-content-wrapper .student-card h3 {
+    font-size: 18px;
+    margin: 8px 0;
+    color: #222;
+}
+
+.tab-content-wrapper .student-card p {
+    font-size: 14px;
+    color: #555;
+    margin: 4px 0;
+}
+
+/* Button */
+.tab-content-wrapper .student-card .btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #20bf6b;
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.tab-content-wrapper .student-card .btn:hover {
+    background: #18a55b;
+}
+
+/* Class teacher badge */
+.tab-content-wrapper .student-card .class-teacher-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ffca28;
+    color: #3a2f00;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Empty state */
+.tab-content-wrapper .students-grid p,
+.tab-content-wrapper .students-grid .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tab-content-wrapper .students-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-content-wrapper form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

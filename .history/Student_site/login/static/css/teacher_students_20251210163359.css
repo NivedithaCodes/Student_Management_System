@@ -1,0 +1,163 @@
+ /* Wrapper */
+ .tab-content-wrapper {
+     padding: 25px;
+     display: flex;
+     flex-direction: column;
+     gap: 30px;
+     font-family: "Poppins", sans-serif;
+ }
+
+ /* Page Title */
+ .tab-content-wrapper h2 {
+     text-align: center;
+     font-size: 32px;
+     font-weight: 600;
+     color: #222;
+ }
+
+ /* Section Headings */
+ .tab-content-wrapper h3 {
+     font-size: 22px;
+     font-weight: 600;
+     color: #333;
+     margin-bottom: 15px;
+     border-bottom: 1px solid #e0e0e0;
+     padding-bottom: 5px;
+ }
+
+ /* Filter Form */
+ .filter-form {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 12px;
+     align-items: center;
+     justify-content: flex-start;
+     margin-bottom: 20px;
+ }
+
+ .filter-form select {
+     padding: 10px 14px;
+     border-radius: 8px;
+     border: 1px solid #cfd6e3;
+     font-size: 14px;
+ }
+
+ .filter-form button {
+     padding: 10px 16px;
+     border-radius: 8px;
+     background-color: #4b7bec;
+     color: #fff;
+     border: none;
+     cursor: pointer;
+     transition: 0.3s;
+ }
+
+ .filter-form button:hover {
+     background-color: #3867d6;
+ }
+
+ /* Students Grid */
+ .students-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+     gap: 20px;
+ }
+
+ /* Student Card */
+ .student-card {
+     background: #fff;
+     padding: 20px;
+     border-radius: 12px;
+     text-align: center;
+     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+     position: relative;
+     transition: transform 0.2s ease, box-shadow 0.2s ease;
+ }
+
+ .student-card:hover {
+     transform: translateY(-4px);
+     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+ }
+
+ /* Card Icon */
+ .student-card .card-icon {
+     width: 60px;
+     height: 60px;
+     margin: 0 auto 10px;
+     background: #eaf0ff;
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .student-card .card-icon i {
+     font-size: 28px;
+     color: #4b7bec;
+ }
+
+ /* Student Info */
+ .student-card h3 {
+     font-size: 18px;
+     margin: 8px 0;
+     color: #222;
+ }
+
+ .student-card p {
+     font-size: 14px;
+     color: #555;
+     margin: 4px 0;
+ }
+
+ /* View Profile Button */
+ .student-card .btn {
+     display: inline-block;
+     margin-top: 12px;
+     padding: 8px 16px;
+     border-radius: 8px;
+     background: #20bf6b;
+     color: #fff;
+     font-size: 14px;
+     text-decoration: none;
+     transition: background 0.3s;
+ }
+
+ .student-card .btn:hover {
+     background: #18a55b;
+ }
+
+ /* Class Teacher Badge */
+ .student-card .class-teacher-badge {
+     position: absolute;
+     top: 12px;
+     right: 12px;
+     background: #ffca28;
+     color: #3a2f00;
+     padding: 4px 8px;
+     font-size: 12px;
+     font-weight: 600;
+     border-radius: 6px;
+ }
+
+ /* Empty State */
+ .students-grid .empty,
+ .students-grid p.empty {
+     grid-column: 1 / -1;
+     text-align: center;
+     color: #777;
+     font-size: 14px;
+ }
+
+ /* Responsive */
+ @media (max-width: 768px) {
+     .students-grid {
+         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+     }
+ }
+
+ @media (max-width: 480px) {
+     .filter-form {
+         flex-direction: column;
+         align-items: flex-start;
+     }
+ }

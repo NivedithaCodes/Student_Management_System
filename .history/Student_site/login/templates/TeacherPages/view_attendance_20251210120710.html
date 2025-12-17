@@ -1,0 +1,37 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<h2>View Attendance</h2>
+
+<div class="attendance-container">
+  {% if attendance_records %}
+    <table class="attendance-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student</th>
+          <th>Class</th>
+          <th>Section</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for att in attendance_records %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ att.student.name }}</td>
+            <td>{{ att.student.class_name.class_name }}</td>
+            <td>{{ att.student.class_name.section }}</td>
+            <td>{{ att.subject.subject.subject_name }}</td>
+            <td>{{ att.date }}</td>
+            <td>{{ att.status }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No attendance records found.</p>
+  {% endif %}
+</div>

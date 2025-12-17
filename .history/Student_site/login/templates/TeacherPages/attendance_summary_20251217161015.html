@@ -1,0 +1,62 @@
+{% load static %}
+{% load dict_extras %}
+
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<div class="attendance-summary-container">
+    <h2>Attendance Summary</h2>
+
+    <div class="summary-info">
+        <p><strong>Class:</strong> {{ class_name }} - {{ section }}</p>
+        <p><strong>Subject:</strong> {{ subject }}</p>
+        <p><strong>Date:</strong> {{ date }}</p>
+        <p><strong>Total Present:</strong> {{ total_present }}</p>
+        <p><strong>Total Absent:</strong> {{ total_absent }}</p>
+    </div>
+
+    <hr>
+
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Admission No</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stu in students %}
+            {% comment %} {% with att=stu.attendance_set.filter(subject__subject_name=subject, date=date).first %} {% endcomment %}
+            {% for stu in students %}
+    {% with att=attendance_map|dict_get:stu.id %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ stu.name }}</td>
+        <td>{{ stu.admission_no }}</td>
+        <td>
+            {% if att %}
+                {{ att.status }}
+            {% else %}
+                Not Marked
+            {% endif %}
+        </td>
+    </tr>
+    {% endwith %}
+{% endfor %}
+
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ stu.name }}</td>
+                <td>{{ stu.admission_no }}</td>
+                <td>{{ att.status if att else "Not marked" }}</td>
+            </tr>
+            {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a href="{% url 'teacher' %}?tab=attendance" class="btn-submit">Back to Attendance Dashboard</a>
+    </div>
+</div>

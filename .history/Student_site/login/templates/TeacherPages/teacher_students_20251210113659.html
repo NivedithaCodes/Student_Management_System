@@ -1,0 +1,104 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_students.css' %}">
+<h2 class="page-title">Students</h2>
+
+<div class="filter-bar">
+    <select>
+        <option>Select Class</option>
+        <option>Class A</option>
+        <option>Class B</option>
+    </select>
+
+    <select>
+        <option>Select Section</option>
+        <option>A</option>
+        <option>B</option>
+    </select>
+
+    <button>Apply Filters</button>
+</div>
+
+<div class="student-grid">
+    <!-- Example Card -->
+    <div class="student-card">
+        <img src="profile.jpg" class="student-photo">
+
+        <div class="student-name">John Doe</div>
+        <div class="student-info">Class: 10 A</div>
+        <div class="student-info">Admission No: 12345</div>
+
+        <a href="#" class="view-btn">View Profile</a>
+    </div>
+</div>
+{% comment %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_students.css' %}">
+
+<h2>My Students</h2>
+
+<!-- 🔽 CLASS FILTER DROPDOWN -->
+<form method="GET" action="{% url 'view_students' %}" style="margin-bottom: 20px;">
+  <select name="class">
+    <option value="">-- Filter by class --</option>
+    {% for cls in all_classes %}
+      <option value="{{ cls.id }}" {% if filter_class == cls.id|stringformat:"s" %}selected{% endif %}>
+        {{ cls.class_name }} - {{ cls.section }}
+      </option>
+    {% endfor %}
+  </select>
+  <button type="submit">Filter</button>
+</form>
+
+
+
+<!-- ⭐ SECTION 1: CLASS TEACHER STUDENTS -->
+{% if class_teacher_class %}
+<h3>Students of My Class ({{ class_teacher_class.class_name }} - {{ class_teacher_class.section }})</h3>
+<div class="students-grid">
+
+  {% for stu in class_teacher_students %}
+  <div class="card student-card class-student">
+
+    <div class="card-icon">
+      <i class="fa fa-users"></i>
+    </div>
+
+    <h3>{{ stu.name }}</h3>
+    <p><strong>Admission No:</strong> {{ stu.admission_no }}</p>
+    <p><strong>Email:</strong> {{ stu.email }}</p>
+    <p><strong>Mobile:</strong> {{ stu.mobile }}</p>
+
+    <a href="{% url 'student_profile' stu.id %}" class="btn">View Profile</a>
+
+    <span class="class-teacher-badge">My Class</span>
+
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+
+<!-- ⭐ SECTION 2: SUBJECT TEACHER STUDENTS -->
+<h3>Students of Classes I Teach</h3>
+<div class="students-grid">
+
+  {% for stu in subject_teacher_students %}
+  <div class="card student-card">
+
+    <div class="card-icon">
+      <i class="fa fa-user-graduate"></i>
+    </div>
+
+    <h3>{{ stu.name }}</h3>
+    <p><strong>Class:</strong> {{ stu.class_name.class_name }} - {{ stu.class_name.section }}</p>
+    <p><strong>Email:</strong> {{ stu.email }}</p>
+    <p><strong>Mobile:</strong> {{ stu.mobile }}</p>
+
+    <a href="{% url 'student_profile' stu.id %}" class="btn">View Profile</a>
+
+  </div>
+  {% empty %}
+    <p>No students found.</p>
+  {% endfor %}
+</div> {% endcomment %}
+ 

@@ -1,0 +1,118 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<div class="attendance-container">
+
+  <h2>View Attendance</h2>
+
+  {% if classes %}
+  <div class="controls">
+      <label for="class_select_view">Class</label>
+      <select id="class_select_view">
+          <option value="">-- Select class --</option>
+          {% for c in classes %}
+              <option value="{{ c.id }}">{{ c.class_name }} - {{ c.section }}</option>
+          {% endfor %}
+      </select>
+
+      <label for="subject_select_view">Subject</label>
+      <select id="subject_select_view">
+          <option value="">-- Select subject --</option>
+          {% for sub in subjects %}
+              <option value="{{ sub.id }}" data-class="{{ sub.assigned_class.id }}">
+                  {{ sub.subject.subject_name }} ({{ sub.assigned_class }})
+              </option>
+          {% endfor %}
+      </select>
+
+      <label for="date_input_view">Date</label>
+      <input type="date" id="date_input_view" value="{{ today }}">
+  </div>
+
+  <hr>
+
+  <div class="students-area">
+      <table class="attendance-table" id="attendance_table">
+          <thead>
+              <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Admission No</th>
+                  <th>Status</th>
+              </tr>
+          </thead>
+          <tbody id="attendance_tbody">
+              <tr><td colspan="4">Select class, subject, and date to view attendance</td></tr>
+          </tbody>
+      </table>
+  </div>
+
+  {% else %}
+      <p>You are not assigned to any class or subjects.</p>
+  {% endif %}
+
+</div>
+
+<script>
+    const studentsByClass = {{ students_by_class|safe }};
+    const classSelect = document.getElementById('class_select_view');
+    const subjectSelect = document.getElementById('subject_select_view');
+    const dateInput = document.getElementById('date_input_view');
+    const tbody = document.getElementById('attendance_tbody');
+
+    function renderAttendance() {
+        const classId = classSelect.value;
+        const subjectId = subjectSelect.value;
+        const date = dateInput.value;
+        tbody.innerHTML = '';
+
+        if(!classId || !subjectId || !date){
+            tbody.innerHTML = '<tr><td colspan="4">Select class, subject, and date to view attendance</td></tr>';
+            return;
+        }
+
+        // Fetch attendance data via AJAX
+        fetch(`/get-attendance/?class_id=${classId}&subject_id=${subjectId}&date=${date}`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.students && data.students.length > 0){
+                data.students.forEach((stu, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index+1}</td>
+                        <td>${stu.name}</td>
+                        <td>${stu.admission_no || ''}</td>
+                        <td>${stu.status || 'Not marked'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4">No attendance records found</td></tr>';
+            }
+        })
+        .catch(err => {
+            tbody.innerHTML = '<tr><td colspan="4">Error fetching attendance</td></tr>';
+            console.error(err);
+        });
+    }
+
+    classSelect.addEventListener('change', function(){
+        const classId = this.value;
+        for(let opt of subjectSelect.options){
+            const dataClass = opt.getAttribute('data-class');
+            if(!dataClass || dataClass === classId || opt.value === '') opt.style.display = '';
+            else opt.style.display = 'none';
+        }
+        if(subjectSelect.value){
+            const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+            if(selOpt && selOpt.getAttribute('data-class') !== classId){
+                subjectSelect.value = '';
+            }
+        }
+        renderAttendance();
+    });
+
+    subjectSelect.addEventListener('change', renderAttendance);
+    dateInput.addEventListener('change', renderAttendance);
+</script>

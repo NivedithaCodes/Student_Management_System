@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Attendance</title>
+    <link rel="stylesheet" href="{% static 'css/attendance_summary.css' %}">
+</head>
+<body>
+
+<div class="attendance-container">
+
+    <!-- HEADER -->
+    <div class="summary-header">
+        <h2>Attendance Record</h2>
+        <p class="meta">
+            <span><strong>Class:</strong> {{ class_name }} {{ section }}</span>
+            <span><strong>Subject:</strong> {{ subject }}</span>
+            <span><strong>Date:</strong> {{ date }}</span>
+        </p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="card present">
+            <h3>{{ total_present }}</h3>
+            <p>Present</p>
+        </div>
+        <div class="card absent">
+            <h3>{{ total_absent }}</h3>
+            <p>Absent</p>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Admission No</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in students_with_attendance %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.student.name }}</td>
+                    <td>{{ item.student.admission_no }}</td>
+                    <td>
+                        {% if item.status == "present" %}
+                            <span class="badge present">Present</span>
+                        {% else %}
+                            <span class="badge absent">Absent</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
+
+{% comment %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<div class="attendance-container">
+  <h2>View Attendance</h2>
+
+  {% if classes %}
+  <div class="controls">
+      <label for="class_select_view">Class</label>
+      <select id="class_select_view">
+          <option value="">-- Select class --</option>
+          {% for c in classes %}
+              <option value="{{ c.id }}">{{ c.class_name }} - {{ c.section }}</option>
+          {% endfor %}
+      </select>
+
+      <label for="subject_select_view">Subject</label>
+      <select id="subject_select_view">
+          <option value="">-- Select subject --</option>
+          {% for sub in subjects %}
+              <option value="{{ sub.id }}" data-class="{{ sub.assigned_class.id }}">
+                  {{ sub.subject.subject_name }} ({{ sub.assigned_class }})
+              </option>
+          {% endfor %}
+      </select>
+
+      <label for="date_input_view">Date</label>
+      <input type="date" id="date_input_view" value="{{ today }}">
+  </div>
+
+  <hr>
+
+  <div class="students-area">
+      <table class="attendance-table" id="attendance_table">
+          <thead>
+              <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Admission No</th>
+                  <th>Status</th>
+              </tr>
+          </thead>
+          <tbody id="attendance_tbody">
+              <tr><td colspan="4">Select class, subject, and date to view attendance</td></tr>
+          </tbody>
+      </table>
+  </div>
+
+  {% else %}
+      <p>You are not assigned to any class or subjects.</p>
+  {% endif %}
+
+</div>
+
+<script>
+const classSelect = document.getElementById('class_select_view');
+const subjectSelect = document.getElementById('subject_select_view');
+const dateInput = document.getElementById('date_input_view');
+const tbody = document.getElementById('attendance_tbody');
+
+function renderAttendance(students) {
+    tbody.innerHTML = '';
+    if(!students || students.length===0){
+        tbody.innerHTML = '<tr><td colspan="4">No attendance records found</td></tr>';
+        return;
+    }
+
+    students.forEach((stu, index)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${index+1}</td>
+            <td>${stu.name}</td>
+            <td>${stu.admission_no || ''}</td>
+            <td>${stu.status || 'Not marked'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function fetchAttendance() {
+    const classId = classSelect.value;
+    const subjectId = subjectSelect.value;
+    const date = dateInput.value;
+
+    if(!classId || !subjectId || !date) {
+        tbody.innerHTML = '<tr><td colspan="4">Select class, subject, and date to view attendance</td></tr>';
+        return;
+    }
+
+    try {
+        const res = await fetch(`/get-attendance/?class_id=${classId}&subject_id=${subjectId}&date=${date}`);
+        const data = await res.json();
+        renderAttendance(data.students);
+    } catch(err) {
+        tbody.innerHTML = '<tr><td colspan="4">Error fetching attendance</td></tr>';
+        console.error(err);
+    }
+}
+
+// Filter subjects based on selected class
+classSelect.addEventListener('change', ()=>{
+    const classId = classSelect.value;
+    for(let opt of subjectSelect.options){
+        const dataClass = opt.getAttribute('data-class');
+        opt.style.display = (!dataClass || dataClass===classId || opt.value==='') ? '' : 'none';
+    }
+    if(subjectSelect.value){
+        const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+        if(selOpt && selOpt.getAttribute('data-class') !== classId){
+            subjectSelect.value = '';
+        }
+    }
+    fetchAttendance();
+});
+
+subjectSelect.addEventListener('change', fetchAttendance);
+dateInput.addEventListener('change', fetchAttendance);
+
+</script> {% endcomment %}

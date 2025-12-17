@@ -1,0 +1,156 @@
+ /* ALL STYLES ARE SAFELY CONTAINED INSIDE .students-page */
+ .students-page {
+     padding: 20px 30px;
+     background: #f4f6fb;
+     font-family: "Poppins", sans-serif;
+ }
+
+ /* TITLE */
+ .students-page h2 {
+     text-align: center;
+     font-size: 30px;
+     font-weight: 600;
+     margin-bottom: 25px;
+     color: #222;
+ }
+
+ /* SECTION HEADERS */
+ .students-page h3 {
+     margin: 25px 0 15px;
+     color: #333;
+     font-size: 22px;
+     font-weight: 600;
+ }
+
+ /* FILTER FORM */
+ .students-page form {
+     display: flex;
+     gap: 12px;
+     align-items: center;
+ }
+
+ .students-page form select {
+     padding: 12px 18px;
+     border-radius: 10px;
+     border: 1px solid #cfd6e3;
+     background: #ffffff;
+     font-size: 15px;
+     cursor: pointer;
+     transition: 0.3s;
+ }
+
+ .students-page form select:hover {
+     border-color: #7a8de0;
+ }
+
+ .students-page form button {
+     padding: 12px 20px;
+     background: #4b7bec;
+     color: #fff;
+     border-radius: 10px;
+     border: none;
+     font-size: 15px;
+     cursor: pointer;
+     transition: 0.3s;
+ }
+
+ .students-page form button:hover {
+     background: #3867d6;
+ }
+
+ /* GRID */
+ .students-page .students-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+     gap: 25px;
+ }
+
+ /* CARD */
+ .students-page .student-card {
+     background: #ffffff;
+     padding: 22px;
+     border-radius: 16px;
+     text-align: center;
+     box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.07);
+     position: relative;
+     transition: 0.3s ease;
+ }
+
+ .students-page .student-card:hover {
+     transform: translateY(-6px);
+     box-shadow: 0px 10px 28px rgba(0, 0, 0, 0.12);
+ }
+
+ /* ICON */
+ .students-page .card-icon {
+     width: 70px;
+     height: 70px;
+     margin: 0 auto 12px;
+     background: #eaf0ff;
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .students-page .card-icon i {
+     font-size: 30px;
+     color: #4b7bec;
+ }
+
+ /* NAME */
+ .students-page .student-card h3 {
+     font-size: 20px;
+     margin-bottom: 10px;
+     color: #222;
+ }
+
+ /* INFO TEXT */
+ .students-page .student-card p {
+     font-size: 14px;
+     color: #555;
+     margin-bottom: 6px;
+ }
+
+ .students-page .student-card strong {
+     color: #333;
+ }
+
+ /* BUTTON */
+ .students-page .btn {
+     display: inline-block;
+     background: #20bf6b;
+     padding: 10px 16px;
+     border-radius: 10px;
+     color: white;
+     font-size: 14px;
+     text-decoration: none;
+     margin-top: 10px;
+     transition: 0.3s;
+ }
+
+ .students-page .btn:hover {
+     background: #18a55b;
+ }
+
+ /* BADGE */
+ .students-page .class-teacher-badge {
+     position: absolute;
+     top: 14px;
+     right: 14px;
+     background: #ffca28;
+     padding: 6px 12px;
+     border-radius: 10px;
+     font-size: 12px;
+     font-weight: 600;
+     color: #3a2f00;
+     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+ }
+
+ /* EMPTY MESSAGE */
+ .students-page .students-grid p,
+ .students-page .empty {
+     text-align: center;
+     color: #777;
+     font-size: 15px;
+ }

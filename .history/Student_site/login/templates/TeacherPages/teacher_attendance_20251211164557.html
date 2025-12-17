@@ -1,0 +1,293 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<div class="attendance-container">
+  <h2>Attendance Dashboard</h2>
+
+  {% if classes %}
+  <form method="POST" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+      <div class="controls">
+          <label>Class</label>
+          <select id="class_select" name="class_id" required>
+              <option value="">-- Select class --</option>
+              {% for c in classes %}
+                  <option value="{{ c.id }}">{{ c.class_name }} - {{ c.section }}</option>
+              {% endfor %}
+          </select>
+
+          <label>Subject</label>
+          <select id="subject_select" name="subject_id" required>
+              <option value="">-- Select subject --</option>
+              {% for sub in subjects %}
+                  <option value="{{ sub.id }}" data-class="{{ sub.assigned_class.id }}">
+                      {{ sub.subject.subject_name }} ({{ sub.assigned_class }})
+                  </option>
+              {% endfor %}
+          </select>
+
+          <label>Date</label>
+          <input type="date" id="date_input" name="date" value="{{ today }}">
+      </div>
+
+      <hr>
+
+      <div class="students-area">
+          <p class="info-text"></p>
+          <table class="attendance-table" id="students_table">
+              <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Admission No</th>
+                      <th>Present</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+              <tbody id="students_tbody">
+                  <tr><td colspan="5">No class selected</td></tr>
+              </tbody>
+          </table>
+      </div>
+
+      <div class="actions">
+          <button type="submit" class="btn-submit">Submit Attendance</button>
+      </div>
+  </form>
+  {% else %}
+      <p>You are not assigned to any class or subjects.</p>
+  {% endif %}
+</div>
+
+<script>
+const studentsByClass = {{ students_by_class|safe }};
+const markableSubjectMap = {{ markable_subject_map|safe }};
+const classTeacherIds = {{ class_teacher_ids|safe }};
+
+const classSelect = document.getElementById('class_select');
+const subjectSelect = document.getElementById('subject_select');
+const dateInput = document.getElementById('date_input');
+const tbody = document.getElementById('students_tbody');
+
+function renderStudents(students, markStatus=true) {
+    tbody.innerHTML = '';
+    if(!students || students.length===0){
+        tbody.innerHTML = '<tr><td colspan="5">No students found</td></tr>';
+        return;
+    }
+
+    const isClassTeacher = classTeacherIds.includes(parseInt(classSelect.value));
+    const markableSubjects = markableSubjectMap[classSelect.value] || [];
+
+    students.forEach((stu,index)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${index+1}</td>
+            <td>${stu.name}</td>
+            <td>${stu.admission_no || ''}</td>
+            <td></td>
+            <td>${stu.status}</td>
+        `;
+
+        const td = tr.querySelector('td:nth-child(4)');
+        const checkbox = document.createElement('input');
+        checkbox.type='checkbox';
+        checkbox.name='present_'+stu.id;
+        checkbox.value='present';
+
+        // Enable checkbox only if teacher can mark
+        let canMark = markStatus && (isClassTeacher || markableSubjects.includes(parseInt(subjectSelect.value)));
+        checkbox.disabled = !canMark;
+        if(!canMark) checkbox.title = "Cannot mark attendance";
+
+        if(stu.status==='Present') checkbox.checked=true;
+
+        td.appendChild(checkbox);
+        tbody.appendChild(tr);
+    });
+}
+
+async function fetchAttendance(){
+    const classId = classSelect.value;
+    const subjectId = subjectSelect.value;
+    const date = dateInput.value;
+
+    if(!classId || !subjectId || !date) return;
+
+    const res = await fetch(`/get-attendance/?class_id=${classId}&subject_id=${subjectId}&date=${date}`);
+    const data = await res.json();
+    renderStudents(data.students);
+}
+
+classSelect.addEventListener('change', ()=> {
+    const classId = classSelect.value;
+
+    // 1️⃣ Show students immediately
+    if (studentsByClass[classId]) {
+        renderStudents(studentsByClass[classId], false);  // false = cannot mark yet
+    }
+
+    // 2️⃣ Filter subjects based on class
+    for (let opt of subjectSelect.options) {
+        const dataClass = opt.getAttribute('data-class');
+        opt.style.display = (!dataClass || dataClass === classId || opt.value === '') ? '' : 'none';
+    }
+
+    // Reset subject if it does not belong to this class
+    if (subjectSelect.value) {
+        const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+        if (selOpt.getAttribute('data-class') !== classId) subjectSelect.value = '';
+    }
+
+    // 3️⃣ If subject already selected → load attendance
+    fetchAttendance();
+});
+
+
+subjectSelect.addEventListener('change', fetchAttendance);
+dateInput.addEventListener('change', fetchAttendance);
+
+// Initial render
+if(classSelect.value && subjectSelect.value) fetchAttendance();
+</script>
+{% comment %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<div class="attendance-container">
+  <h2>Attendance Dashboard</h2>
+
+  {% if classes %}
+  <form method="POST" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+      <div class="controls">
+          <label>Class</label>
+          <select id="class_select" name="class_id" required>
+              <option value="">-- Select class --</option>
+              {% for c in classes %}
+                  <option value="{{ c.id }}">{{ c.class_name }} - {{ c.section }}</option>
+              {% endfor %}
+          </select>
+
+          <label>Subject</label>
+          <select id="subject_select" name="subject_id" required>
+              <option value="">-- Select subject --</option>
+              {% for sub in subjects %}
+                  <option value="{{ sub.id }}" data-class="{{ sub.assigned_class.id }}">
+                      {{ sub.subject.subject_name }} ({{ sub.assigned_class }})
+                  </option>
+              {% endfor %}
+          </select>
+
+          <label>Date</label>
+          <input type="date" id="date_input" name="date" value="{{ today }}">
+      </div>
+
+      <hr>
+
+      <div class="students-area">
+          <p class="info-text"></p>
+          <table class="attendance-table" id="students_table">
+              <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Admission No</th>
+                      <th>Present</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+              <tbody id="students_tbody">
+                  <tr><td colspan="5">No class selected</td></tr>
+              </tbody>
+          </table>
+      </div>
+
+      <div class="actions">
+          <button type="submit" class="btn-submit">Submit Attendance</button>
+      </div>
+  </form>
+  {% else %}
+      <p>You are not assigned to any class or subjects.</p>
+  {% endif %}
+</div>
+
+<script>
+const studentsByClass = {{ students_by_class|safe }};
+const markableSubjectMap = {{ markable_subject_map|safe }};
+const classTeacherIds = {{ class_teacher_ids|safe }};
+
+const classSelect = document.getElementById('class_select');
+const subjectSelect = document.getElementById('subject_select');
+const dateInput = document.getElementById('date_input');
+const tbody = document.getElementById('students_tbody');
+
+function renderStudents(students, markStatus=true) {
+    tbody.innerHTML = '';
+    if(!students || students.length===0){
+        tbody.innerHTML = '<tr><td colspan="5">No students found</td></tr>';
+        return;
+    }
+
+    const isClassTeacher = classTeacherIds.includes(parseInt(classSelect.value));
+    const markableSubjects = markableSubjectMap[classSelect.value] || [];
+
+    students.forEach((stu,index)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${index+1}</td>
+            <td>${stu.name}</td>
+            <td>${stu.admission_no || ''}</td>
+            <td></td>
+            <td>${stu.status}</td>
+        `;
+
+        const td = tr.querySelector('td:nth-child(4)');
+        const checkbox = document.createElement('input');
+        checkbox.type='checkbox';
+        checkbox.name='present_'+stu.id;
+        checkbox.value='present';
+
+        // Enable checkbox only if teacher can mark
+        let canMark = markStatus && (isClassTeacher || markableSubjects.includes(parseInt(subjectSelect.value)));
+        checkbox.disabled = !canMark;
+        if(!canMark) checkbox.title = "Cannot mark attendance";
+
+        if(stu.status==='Present') checkbox.checked=true;
+
+        td.appendChild(checkbox);
+        tbody.appendChild(tr);
+}
+
+async function fetchAttendance(){
+    const classId = classSelect.value;
+    const subjectId = subjectSelect.value;
+    const date = dateInput.value;
+
+    if(!classId || !subjectId || !date) return;
+
+    const res = await fetch(`/get-attendance/?class_id=${classId}&subject_id=${subjectId}&date=${date}`);
+    const data = await res.json();
+    renderStudents(data.students);
+}
+
+classSelect.addEventListener('change', ()=>{
+    const classId = classSelect.value;
+    for(let opt of subjectSelect.options){
+        const dataClass = opt.getAttribute('data-class');
+        opt.style.display = (!dataClass || dataClass===classId || opt.value==='') ? '' : 'none';
+    }
+    if(subjectSelect.value){
+        const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+        if(selOpt.getAttribute('data-class')!==classId) subjectSelect.value='';
+    }
+    fetchAttendance();
+});
+
+subjectSelect.addEventListener('change', fetchAttendance);
+dateInput.addEventListener('change', fetchAttendance);
+
+// Initial render
+if(classSelect.value && subjectSelect.value) fetchAttendance();
+</script>
+ 
+   {% endcomment %}

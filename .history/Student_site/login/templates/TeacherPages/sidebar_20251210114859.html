@@ -1,0 +1,60 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+<div class="side-panel" id="sidePanel">
+  <h2>Teacher</h2>
+  <hr>
+
+  <!-- Profile -->
+  <a href="{% url 'profile' %}" class="side-panel-icons {% if request.path == '/profile/' %}active{% endif %}">
+    <i class="fa fa-user"></i> Profile
+  </a>
+
+  <!-- Dashboard -->
+  <a href="/teacher/?tab=dashboard" class="side-panel-icons">
+    <i class="fa fa-tachometer-alt"></i> Dashboard
+  </a>
+
+  <!-- Assigned Courses -->
+  <a href="/teacher/?tab=courses" class="side-panel-icons">
+    <i class="fa fa-book"></i> Assigned Courses
+  </a>
+
+  <!-- View Students -->
+  <a href="/teacher/?tab=view_students" class="side-panel-icons">
+    <i class="fa fa-user-graduate"></i> View Students
+  </a>
+
+  <!-- Attendance & Marks submenu -->
+  <div class="menu-item" onclick="toggleMenu('academicsMenu', this)">
+    <span><i class="fa fa-clipboard-check"></i> Academics</span>
+    <span class="arrow">&lt;</span>
+  </div>
+  <div id="academicsMenu" class="subMenu">
+    <a href="/teacher/?tab=attendance" class="side-panel-icons">
+      <i class="fa fa-user-check"></i> Mark Attendance
+    </a>
+     <a href="/teacher/?tab=view-attendance" class="side-panel-icons">
+      <i class="fa fa-user-check"></i> View Attendance
+    </a>
+    <a href="/teacher/?tab=add_marks" class="side-panel-icons">
+      <i class="fa fa-pen"></i> Add Marks
+    </a>
+    <a href="/teacher/?tab=exams" class="side-panel-icons">
+      <i class="fa fa-clipboard-list"></i> Exams
+    </a>
+    <a href="/teacher/?tab=timetables" class="side-panel-icons">
+      <i class="fa fa-calendar-alt"></i> View Timetables
+    </a>
+  </div>
+
+  <!-- Notifications -->
+  <a href="/teacher/?tab=notifications" class="side-panel-icons">
+    <i class="fa fa-bell"></i> Send Notification
+  </a>
+
+  <!-- Settings -->
+  <a href="{% url 'settings' %}" class="side-panel-icons">
+    <i class="fa fa-cog"></i> Settings
+  </a>
+</div>

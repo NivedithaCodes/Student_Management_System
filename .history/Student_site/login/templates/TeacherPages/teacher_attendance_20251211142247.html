@@ -1,0 +1,148 @@
+ {% load static %}
+
+<link rel="stylesheet" href="{% static 'css/teacher_attendance.css' %}">
+
+<div class="attendance-container">
+
+  <h2>Mark Attendance</h2>
+
+  {% if classes %}
+  <form method="POST" action="{% url 'submit_attendance' %}" id="attendanceForm">
+      {% csrf_token %}
+
+      <!-- Class & Subject & Date Selection -->
+      <div class="controls">
+          <label for="class_select">Class</label>
+          <select id="class_select" name="class_id" required>
+              <option value="">-- Select class --</option>
+              {% for c in classes %}
+                  <option value="{{ c.id }}">{{ c.class_name }} - {{ c.section }}</option>
+              {% endfor %}
+          </select>
+
+          <label for="subject_select">Subject</label>
+          <select id="subject_select" name="subject_id" required>
+              <option value="">-- Select subject --</option>
+              {% for sub in subjects %}
+                  <option value="{{ sub.id }}" data-class="{{ sub.assigned_class.id }}">
+                      {{ sub.subject.subject_name }} ({{ sub.assigned_class }})
+                  </option>
+              {% endfor %}
+          </select>
+
+          <label for="date_input">Date</label>
+          <input type="date" id="date_input" name="date" value="{{ today }}">
+      </div>
+
+      <hr>
+
+      <!-- Students Table -->
+      <div class="students-area">
+          <p class="info-text">Select a class to load students. You can mark present only for students of your subject/class.</p>
+          <table class="attendance-table" id="students_table">
+              <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Admission No</th>
+                      <th>Present</th>
+                  </tr>
+              </thead>
+              <tbody id="students_tbody">
+                  <tr><td colspan="4">No class selected</td></tr>
+              </tbody>
+          </table>
+      </div>
+
+      <div class="actions">
+          <button type="submit" class="btn-submit">Submit Attendance</button>
+      </div>
+  </form>
+  {% else %}
+      <p>You are not assigned to any class or subjects.</p>
+  {% endif %}
+
+</div>
+
+<script>
+    // Students by class (from Django)
+    const studentsByClass = {{ students_by_class|safe }};
+    const markableSubjectMap = {{ markable_subject_map|safe }};
+    const classTeacherIds = {{ class_teacher_ids|safe }};
+
+    const classSelect = document.getElementById('class_select');
+    const subjectSelect = document.getElementById('subject_select');
+    const tbody = document.getElementById('students_tbody');
+
+    function renderStudents() {
+        const classId = classSelect.value;
+        const subjectId = subjectSelect.value;
+        tbody.innerHTML = '';
+
+        if(!classId){
+            tbody.innerHTML = '<tr><td colspan="4">No class selected</td></tr>';
+            return;
+        }
+
+        const students = studentsByClass[classId] || [];
+        if(students.length === 0){
+            tbody.innerHTML = '<tr><td colspan="4">No students found in this class</td></tr>';
+            return;
+        }
+
+        const isClassTeacher = classTeacherIds.includes(parseInt(classId));
+        const markableSubjects = markableSubjectMap[classId] || [];
+
+        students.forEach((stu, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index+1}</td>
+                <td>${stu.name}</td>
+                <td>${stu.admission_no || ''}</td>
+                <td></td>
+            `;
+
+            const td = tr.querySelector('td:last-child');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'present_' + stu.id;
+            checkbox.value = 'present';
+
+            // Only enable if teacher can mark this subject
+            let canMark = false;
+            if(isClassTeacher){
+                canMark = markableSubjects.includes(parseInt(subjectId));
+            } else if(subjectId){
+                canMark = markableSubjects.includes(parseInt(subjectId));
+            }
+
+            checkbox.disabled = !canMark;
+            if(!canMark) checkbox.title = "You cannot mark attendance for this student/subject";
+
+            td.appendChild(checkbox);
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Filter subject dropdown for selected class
+    classSelect.addEventListener('change', function(){
+        const classId = this.value;
+        for(let opt of subjectSelect.options){
+            const dataClass = opt.getAttribute('data-class');
+            if(!dataClass || dataClass === classId || opt.value === '') opt.style.display = '';
+            else opt.style.display = 'none';
+        }
+        if(subjectSelect.value){
+            const selOpt = subjectSelect.options[subjectSelect.selectedIndex];
+            if(selOpt && selOpt.getAttribute('data-class') !== classId){
+                subjectSelect.value = '';
+            }
+        }
+        renderStudents();
+    });
+
+    subjectSelect.addEventListener('change', renderStudents);
+
+    // Initial render
+    if(classSelect.value) renderStudents();
+</script>

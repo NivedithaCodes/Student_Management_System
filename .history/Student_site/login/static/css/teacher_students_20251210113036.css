@@ -1,0 +1,235 @@
+/* .students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.student-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.student-card .card-icon {
+    font-size: 40px;
+    color: #4a90e2;
+    margin-bottom: 10px;
+}
+
+.student-card h3 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.student-card p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+/* View Profile button */
+/* .student-card .btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.student-card .btn:hover {
+    background-color: #357ABD;
+}
+
+/* Highlight class students */
+/* .class-student {
+    border: 2px solid #4a90e2;
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}
+
+.class-teacher-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 12px;
+    border-radius: 4px;
+} */
+
+/* ==============================
+   View Students – Modern Layout
+   ============================== */
+
+.view-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.view-header h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Filter Dropdown */
+.filter-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-box select {
+    padding: 10px 14px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    outline: none;
+    min-width: 180px;
+    cursor: pointer;
+}
+
+.filter-btn {
+    padding: 10px 16px;
+    border: none;
+    background: #4d79ff;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.filter-btn:hover {
+    background: #3458d4;
+}
+
+/* Students Grid Layout */
+.students-section {
+    margin-top: 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #444;
+}
+
+.students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+}
+
+/* Student Card */
+.student-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border-left: 5px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.student-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 26px rgba(0, 0, 0, 0.10);
+}
+
+/* Highlight if class teacher student */
+.student-card.class-student {
+    border-left: 5px solid #4CAF50;
+}
+
+/* Icon Circle */
+.card-icon {
+    width: 55px;
+    height: 55px;
+    background: #eef2ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.card-icon i {
+    font-size: 22px;
+    color: #4d79ff;
+}
+
+/* Student Info */
+.student-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.student-card p {
+    margin: 4px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Profile Button */
+.student-card .btn {
+    margin-top: 12px;
+    display: inline-block;
+    padding: 10px 16px;
+    background: #4d79ff;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.student-card .btn:hover {
+    background: #3458d4;
+}
+
+/* Class-Teacher Badge */
+.class-teacher-badge {
+    display: inline-block;
+    margin-top: 10px;
+    background: #4CAF50;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* No students */
+.no-students {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin-top: 20px;
+}
+
+
+/* Responsive Fix */
+@media (max-width: 480px) {
+    .filter-box {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+}
